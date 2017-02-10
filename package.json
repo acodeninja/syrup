@@ -1,0 +1,23 @@
+{
+  "name": "syrup",
+  "version": "0.0.1",
+  "description": "Extended mocha testing, with file based snippets, test parallelism, and test dependancy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thejsninja/syrup.git"
+  },
+  "keywords": [
+    "testing",
+    "mocha"
+  ],
+  "author": "Lawrence <lawrence@acode.ninja>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/thejsninja/syrup/issues"
+  },
+  "homepage": "https://github.com/thejsninja/syrup#readme"
+}
