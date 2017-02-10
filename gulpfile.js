@@ -5,3 +5,7 @@ gulp.task('test', () =>
     gulp.src('./tests/test-*', {read: false})
         .pipe(mocha())
 );
+
+gulp.task('watch', () =>
+    gulp.watch('src/**', ['test'])
+);
