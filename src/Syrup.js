@@ -4,7 +4,7 @@ const Faker = require('./Libs/Faker');
 
 class Syrup {
     constructor() {
-        this.faker = Faker;
+        this.faker = new Faker;
     }
 }
 

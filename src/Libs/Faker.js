@@ -16,4 +16,4 @@ class Faker {
     }
 }
 
-module.exports = new Faker();
+module.exports = Faker;
