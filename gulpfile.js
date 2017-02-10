@@ -7,5 +7,5 @@ gulp.task('test', () =>
 );
 
 gulp.task('watch', () =>
-    gulp.watch('src/**', ['test'])
+    gulp.watch(['src/**', 'tests/**'], ['test'])
 );
