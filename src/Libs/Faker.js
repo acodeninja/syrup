@@ -10,6 +10,9 @@ class Faker {
 
         return output ? output : false;
     }
+    setLocale(locale) {
+        this.faker.locale = locale;
+    }
 }
 
 module.exports = new Faker();
