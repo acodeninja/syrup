@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/thejsninja/syrup/issues"
   },
-  "homepage": "https://github.com/thejsninja/syrup#readme"
+  "homepage": "https://github.com/thejsninja/syrup#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.2.0"
+  }
 }
