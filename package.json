@@ -24,5 +24,8 @@
     "gulp": "^3.9.1",
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.2.0"
+  },
+  "dependencies": {
+    "faker": "^3.1.0"
   }
 }
