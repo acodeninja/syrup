@@ -25,7 +25,11 @@
     "gulp-mocha": "^3.0.1"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "faker": "^3.1.0",
+    "lodash": "^4.17.4",
     "mocha": "^3.2.0",
+    "wdio-phantomjs-service": "^0.2.2",
+    "webdriverio": "^4.6.2"
   }
 }
