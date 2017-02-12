@@ -78,6 +78,9 @@ class Queue {
                     _.each(scenarios, (scenario) => {
                         _.extend(this._data, scenario.data);
                     });
+                    _.each(this._scenarios, (scenario) => {
+                        scenario.updateData(this._data);
+                    });
                     done(error);
                 });
             });
@@ -90,7 +93,7 @@ class Queue {
     }
     get report() {
         _.each(this._scenarios, (scenario) => {
-            this._reports[scenario.name] = scenario.report;
+            this._reports[scenario.name] = scenario._data;
         })
         return this._reports;
     }

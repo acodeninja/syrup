@@ -10,7 +10,7 @@ class Scenario {
             worker: 'Console',
             finished: false,
             report: null,
-            data: null
+            data: {}
         };
         this._data = _.extend(defaultData, data);
     }
@@ -25,6 +25,9 @@ class Scenario {
     }
     get report() {
         return this._data.report;
+    }
+    updateData(data) {
+        this._data.data = _.extend(this._data.data, data);
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
@@ -50,6 +53,7 @@ class Scenario {
 
         worker.on('exit', () => {
             this._data.finished = true;
+            this.updateData(localData);
             done(null, this);
         });
 
