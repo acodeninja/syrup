@@ -20,7 +20,7 @@ class PhantomJsBrowserWorker extends BrowserWorker {
         })
     }
     teardown(done) {
-        super.teardown(() => Browser.end().then(() => done() , done)});
+        super.teardown(() => Browser.end().then(() => done() , done));
     }
 }
 
