@@ -22,10 +22,10 @@
   "homepage": "https://github.com/thejsninja/syrup#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-mocha": "^3.0.1",
-    "mocha": "^3.2.0"
+    "gulp-mocha": "^3.0.1"
   },
   "dependencies": {
-    "faker": "^3.1.0"
+    "faker": "^3.1.0",
+    "mocha": "^3.2.0",
   }
 }
