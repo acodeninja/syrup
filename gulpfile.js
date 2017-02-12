@@ -5,7 +5,7 @@ const mocha = require('gulp-mocha');
 
 gulp.task('test', () =>
     gulp.src('./tests/test-*', {read: false})
-        .pipe(mocha())
+        .pipe(mocha({reporter: 'nyan'}))
 );
 
 gulp.task('watch', () =>
