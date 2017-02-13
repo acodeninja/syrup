@@ -47,6 +47,7 @@ class Scenario {
             }
 
             if (msg.teardown) {
+                this._data.finished = true;
                 worker.kill();
             }
         });

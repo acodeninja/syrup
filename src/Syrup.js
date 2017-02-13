@@ -16,8 +16,10 @@ class Syrup {
 
         this._queue.add(scenarioOptions);
     }
-    pour(donePouring) {
-        this._queue.initialise();
+    pour(donePouring, pourProgressUpdate) {
+        this._queue.initialise(function (error, prorgess) {
+            pourProgressUpdate(error, prorgess);
+        });
         this._queue.run(function (error, results) {
             donePouring(error, results);
         });

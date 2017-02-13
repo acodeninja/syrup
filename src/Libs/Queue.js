@@ -37,9 +37,9 @@ class Queue {
     setData(data) {
         _.extend(this._data, data);
     }
-    initialise(done) {
+    initialise(progressUpdate) {
         this.buildRunOrder();
-        this.buildJobs();
+        this.buildJobs(progressUpdate);
     }
     buildRunOrder() {
         _.each(this._scenarios, (scenario, name) => {
@@ -64,7 +64,7 @@ class Queue {
             this._runOrder[scenarioPosition].push(scenario.name);
         });
     }
-    buildJobs() {
+    buildJobs(progressUpdate) {
         _.each(this._runOrder, (tasks, key) => {
             let job = [];
 
@@ -73,10 +73,22 @@ class Queue {
                 job.push(scenario.run.bind(scenario));
             });
 
+            job.push((done) => {
+                let scenarioStatus = {};
+                _.each(this._scenarios, function (scenario) {
+                    scenarioStatus[scenario.name] = scenario._data.finished ?
+                        'done' : 'pending';
+                })
+                progressUpdate(null, scenarioStatus);
+                done();
+            })
+
             this._jobs.push((done) => {
                 async.parallel(job, (error, scenarios) => {
                     _.each(scenarios, (scenario) => {
-                        _.extend(this._data, scenario.data);
+                        if (scenario !=undefined && scenario.constructor.name == 'Scenario') {
+                            _.extend(this._data, scenario.data);
+                        }
                     });
                     _.each(this._scenarios, (scenario) => {
                         scenario.updateData(this._data);
