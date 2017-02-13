@@ -4,7 +4,7 @@ Extended mocha testing, with file based snippets, test parallelism, and test dep
 ## TL;DR
 
 ```javascript
-const syrup = require('../../');
+const syrup = require('syrup');
 
 syrup.scenario(
     // Register a test called array
