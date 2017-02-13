@@ -12,7 +12,7 @@ class Syrup {
             entrypoint: entrypoint,
             dependsOn: dependsOn ? dependsOn : [],
             worker: worker != undefined ? worker : 'Console'
-        }
+        };
 
         this._queue.add(scenarioOptions);
     }
