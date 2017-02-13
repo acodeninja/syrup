@@ -1,5 +1,4 @@
 const syrup = require('../../');
-const _ = require('lodash');
 
 syrup.scenario('array', `${__dirname}/test-array`);
 syrup.scenario('object', `${__dirname}/test-object`);
