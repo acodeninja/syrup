@@ -1,10 +1,15 @@
 'use strict';
 
 const Queue = require('./Libs/Queue');
+const Config = require('./Libs/Config');
 
 class Syrup {
     constructor() {
         this._queue = new Queue;
+        this._config = new Config;
+    }
+    getLocalConfig(directory) {
+        return this._config.getLocalConfig(directory);
     }
     scenario(name, entrypoint, dependsOn, worker) {
         let scenarioOptions = {
