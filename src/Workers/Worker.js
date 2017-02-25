@@ -10,6 +10,7 @@ class Worker {
         this.mocha = new Mocha();
         this.mocha.addFile(scenario.entrypoint);
         this.mocha.reporter('json');
+        this.mocha.timeout(0);
         this.data = scenario.data;
 
         // Register worker process globals
