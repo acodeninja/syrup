@@ -6,10 +6,11 @@ process.on('message', (message) => {
     if (message.scenario && !worker) {
         let scenario = message.scenario;
         // console.log(`${scenario.worker}Worker#${process.pid} has received scenario '${scenario.name}'`);
+        // console.log(scenario.data);
 
-        const Worker = require(`./Workers/${message.scenario.worker}Worker`);
+        const Worker = require(`./Workers/${scenario.worker}Worker`);
 
-        worker = new Worker(message.scenario);
+        worker = new Worker(scenario);
 
         worker.setup(() =>
             worker.run(() =>

@@ -3,15 +3,17 @@
 const BrowserWorker = require('./BrowserWorker');
 const WebDriver = require('webdriverio');
 
+const _ = require('lodash');
+
 class FirefoxBrowserWorker extends BrowserWorker {
     constructor(scenario) {
         super(scenario);
     }
     setup(done) {
-        let BrowserOptions = {
-            capabilities: { browserName: 'firefox' },
-            host: '192.168.140.5'
-        };
+        let BrowserOptions = _.extend({
+            host: 'localhost',
+            desiredCapabilities: { browserName: 'firefox' }
+        }, this.scenario.config.Workers.ChromeBrowser);
 
         if(typeof Browser === 'undefined') {
             global.Browser = WebDriver.remote(BrowserOptions);

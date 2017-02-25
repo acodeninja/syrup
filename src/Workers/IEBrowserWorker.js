@@ -3,17 +3,21 @@
 const BrowserWorker = require('./BrowserWorker');
 const WebDriver = require('webdriverio');
 
+const _ = require('lodash');
+
 class IEBrowserWorker extends BrowserWorker {
     constructor(scenario) {
         super(scenario);
     }
     setup(done) {
-        let BrowserOptions = { browserName: 'internet explorer' };
+        let BrowserOptions = _.extend({
+            host: 'localhost',
+            desiredCapabilities: { browserName: 'internet explorer' }
+        }, this.scenario.config.Workers.ChromeBrowser);
 
-        global.Browser = WebDriver.remote({
-            host: '192.168.140.5',
-            desiredCapabilities: BrowserOptions
-        });
+        if(typeof Browser === 'undefined') {
+            global.Browser = WebDriver.remote(BrowserOptions);
+        }
 
         super.setup(() => {
             Browser.init({

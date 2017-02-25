@@ -10,9 +10,12 @@ class Scenario {
             worker: 'Console',
             finished: false,
             report: null,
-            data: {}
+            data: {},
+            config: {}
         };
+
         this._data = _.extend(defaultData, data);
+        this._data.data.Test = data.config.Test;
     }
     get name() {
         return this._data.name;

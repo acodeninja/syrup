@@ -8,15 +8,16 @@ class Syrup {
         this._queue = new Queue;
         this._config = new Config;
     }
-    getLocalConfig(directory) {
-        return this._config.getLocalConfig(directory);
+    config(path) {
+        this._config.load(path);
     }
     scenario(name, entrypoint, dependsOn, worker) {
         let scenarioOptions = {
             name: name,
             entrypoint: entrypoint,
             dependsOn: dependsOn ? dependsOn : [],
-            worker: worker != undefined ? worker : 'Console'
+            worker: worker != undefined ? worker : 'Console',
+            config: this._config.data
         };
 
         this._queue.add(scenarioOptions);
@@ -31,4 +32,4 @@ class Syrup {
     }
 }
 
-module.exports = new Syrup();
+module.exports = Syrup;

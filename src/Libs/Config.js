@@ -2,19 +2,27 @@
 
 const yaml = require('js-yaml');
 const fs = require('fs');
+const _ = require('lodash');
+
+const ConfigNotFoundError = require('../Errors/ConfigNotFoundError');
 
 class Config {
     constructor() {
-
+        this._data = {};
     }
-    getLocalConfig(directory) {
+    get data() {
+        return this._data;
+    }
+    load(path) {
         try {
-            return yaml.safeLoad(fs.readFileSync(
-                require('path').resolve(directory, 'config.yaml'),
+            this._data = yaml.safeLoad(fs.readFileSync(
+                require('path').resolve(path),
                 'utf8'
-            ))
+            ));
+
+            return true;
         } catch (e) {
-            return e;
+            throw new ConfigNotFoundError(path);
         }
     }
 }
