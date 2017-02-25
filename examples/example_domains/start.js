@@ -1,6 +1,6 @@
 const syrup = require('../../');
 
-syrup.config(`${__dirname}/config.yaml`);
+syrup.config(`./config.yaml`);
 
 syrup.scenario('example.org1', `${__dirname}/test-example.org`, [], 'IEBrowser');
 syrup.scenario('example.org2', `${__dirname}/test-example.org`, [], 'IEBrowser');
