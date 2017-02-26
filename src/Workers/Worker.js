@@ -27,6 +27,16 @@ class Worker {
         };
 
         global.Get = (path) => _.get(this.data, path);
+
+        global.Runs = (path) => {
+            var theSnippet = require(process.cwd() + '/' + path);
+
+            if (typeof theSnippet == 'function') {
+                theSnippet();
+            }
+
+            return theSnippet;
+        };
     }
     setup(done) {
         done();
