@@ -7,20 +7,20 @@ Extended mocha testing, with file based snippets, test parallelism, and test dep
 const syrup = require('syrup');
 
 syrup.scenario(
-    // Register a test called array
+    // Register a scenario called array
     'array',
     // Path to a mocha test
     `${__dirname}/tests/array`
 );
 
 syrup.scenario(
-    // Register a test called object
+    // Register a scenario called object
     'object',
     // Path to a mocha test
     `${__dirname}/tests/object`,
-    // This test depends on the array test to complete first
+    // This test depends on the array scenario to complete first
     ['array'],
-    // This test runs on the default Consoler Worker
+    // This scenario runs on the default Consoler Worker
     'Console'
 );
 
