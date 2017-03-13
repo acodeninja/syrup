@@ -1,8 +1,10 @@
 'use strict';
 
+const _ = require('lodash');
+const chalk = require('chalk');
+
 const Faker = require('../Libs/Faker');
 const Mocha = require('mocha');
-const _ = require('lodash');
 
 class Worker {
     constructor(scenario) {
@@ -39,9 +41,11 @@ class Worker {
         };
     }
     setup(done) {
+        console.log(`${chalk.green(`[syrup.${this.scenario.name}]`)} scenario ${this.scenario.name} in ${this.scenario.worker}Worker#${process.pid} has been set up`);
         done();
     }
     teardown(done) {
+        console.log(`${chalk.green(`[syrup.${this.scenario.name}]`)} scenario ${this.scenario.name} in ${this.scenario.worker}Worker#${process.pid} has been torn down`)
         done();
     }
     run(done) {

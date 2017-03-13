@@ -1,6 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
+const util = require('util');
 const child_process = require('child_process');
 
 class Scenario {
@@ -11,7 +13,8 @@ class Scenario {
             finished: false,
             report: null,
             data: {},
-            config: {}
+            config: {},
+            debug: false
         };
 
         this._data = _.extend(defaultData, data);
@@ -35,6 +38,12 @@ class Scenario {
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
         let localData = {};
+
+        if (this._data.debug) {
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this.data.worker}Worker for ${this.name}`);
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending config: ${JSON.stringify(this._data)}`);
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending data: ${JSON.stringify(this.data)}`);
+        }
 
         worker.on('message', (msg) => {
             if (msg.output) {
