@@ -38,6 +38,14 @@ class Syrup {
         return this;
     }
     pour(donePouring, pourProgressUpdate) {
+        if (typeof donePouring != 'function') {
+            donePouring = () => {};
+            this._debugging = true;
+        }
+        if (typeof pourProgressUpdate != 'function') {
+            pourProgressUpdate = () => {};
+        }
+
         this._queue.initialise(function (error, prorgess) {
             pourProgressUpdate(error, prorgess);
         });
