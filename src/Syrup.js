@@ -50,7 +50,7 @@ class Syrup {
             pourProgressUpdate(error, prorgess);
         });
         if (this._debugging) {
-            console.log(`${chalk.green('[syrup]')} Run order: ${JSON.stringify(this._queue._runOrder)}`);
+            console.log(`${chalk.green('[syrup]')} Run grouping: ${JSON.stringify(this._queue._runOrder)}`);
             console.log(`${chalk.green('[syrup]')} Test Configuration: ${JSON.stringify(this._config.data)}`);
         }
         this._queue.run((error, results) => {
