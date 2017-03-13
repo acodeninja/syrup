@@ -17,12 +17,15 @@ process.on('message', (message) => {
 
         worker = new Worker(scenario);
 
-        worker.setup(() =>
-            worker.run(() =>
-                worker.teardown(() =>
+        worker.setup(() => {
+            console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has been set up`);
+            worker.run(() => {
+                console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has run`);
+                worker.teardown(() => {
+                    console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has been torn down`);
                     process.send({ teardown: true })
-                )
-            )
-        );
+                })
+            })
+        });
     }
 });

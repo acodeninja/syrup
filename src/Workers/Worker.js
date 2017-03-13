@@ -41,11 +41,9 @@ class Worker {
         };
     }
     setup(done) {
-        console.log(`${chalk.green(`[syrup.${this.scenario.name}]`)} scenario ${this.scenario.name} in ${this.scenario.worker}Worker#${process.pid} has been set up`);
         done();
     }
     teardown(done) {
-        console.log(`${chalk.green(`[syrup.${this.scenario.name}]`)} scenario ${this.scenario.name} in ${this.scenario.worker}Worker#${process.pid} has been torn down`)
         done();
     }
     run(done) {
