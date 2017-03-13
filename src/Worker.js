@@ -8,8 +8,10 @@ process.on('message', (message) => {
 
     if (message.scenario && !worker) {
         let scenario = message.scenario;
-        console.log(`${chalk.green(`[syrup.${scenario.name}]`)} scenario ${scenario.name} received by ${scenario.worker}Worker#${process.pid}`);
-        console.log(`${chalk.green(`[syrup.${scenario.name}]`)} ${scenario.worker}Worker#${process.pid} received data for the test: ${JSON.stringify(scenario.data)}`);
+
+        if (scenario.debug) {
+            console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} received with data: ${JSON.stringify(scenario)}`);
+        }
 
         const Worker = require(`./Workers/${scenario.worker}Worker`);
 
