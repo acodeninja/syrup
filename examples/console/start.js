@@ -1,8 +1,8 @@
 const syrup = require('../../');
 
-syrup.scenario('array', `${__dirname}/test-array`);
-syrup.scenario('object', `${__dirname}/test-object`);
-syrup.scenario('save', `${__dirname}/test-save`);
-syrup.scenario('get', `${__dirname}/test-get`, ['save']);
-
-syrup.pour();
+syrup.enableDebug()
+    .scenario('array', `${__dirname}/test-array`)
+    .scenario('object', `${__dirname}/test-object`)
+    .scenario('save', `${__dirname}/test-save`)
+    .scenario('get', `${__dirname}/test-get`, ['save'])
+    .pour();
