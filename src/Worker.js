@@ -9,21 +9,18 @@ process.on('message', (message) => {
     if (message.scenario && !worker) {
         let scenario = message.scenario;
 
-        if (scenario.debug) {
-            console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} received with data: ${JSON.stringify(scenario)}`);
-        }
-
         const Worker = require(`./Workers/${scenario.worker}Worker`);
 
         worker = new Worker(scenario);
 
         worker.setup(() => {
-            console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has been set up`);
-            worker.run(() => {
-                console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has run`);
+            process.send({ log: `scenario ${scenario.name} has been set up` });
+            worker.run((output) => {
+                process.send({ log: `scenario ${scenario.name} has been run` });
+                process.send({ output: output });
                 worker.teardown(() => {
-                    console.log(`${chalk.blue(`[${scenario.worker}Worker#${process.pid}]`)} scenario ${scenario.name} has been torn down`);
-                    process.send({ teardown: true })
+                    process.send({ log: `scenario ${scenario.name} has been torn down` });
+                    process.send({ exit: true });
                 })
             })
         });
