@@ -43,9 +43,6 @@ class Worker {
     setup(done) {
         done();
     }
-    teardown(done) {
-        done();
-    }
     run(done) {
         let output = '';
 
@@ -57,6 +54,8 @@ class Worker {
             process.send({ output: output });
             done();
         });
+    teardown(done) {
+        done();
     }
 }
 
