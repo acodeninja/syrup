@@ -33,7 +33,22 @@ class Scenario {
         return this._data.report;
     }
     updateData(data) {
-        this._data.data = _.extend(this._data.data, data);
+        this._data.data = this.deepExtend(this._data.data, data);
+    }
+    deepExtend(target, source) {
+        for (var prop in source) {
+            if (
+                prop in target &&
+                typeof(target[prop]) == 'object' &&
+                typeof(source[prop]) == 'object'
+            ) {
+                this.deepExtend(target[prop], source[prop]);
+            } else {
+                target[prop] = source[prop];
+            }
+        }
+
+        return target;
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
