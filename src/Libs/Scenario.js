@@ -40,7 +40,7 @@ class Scenario {
         let localData = {};
 
         if (this._data.debug) {
-            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this.data.worker}Worker for ${this.name}`);
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this._data.worker}Worker#${worker.pid} for ${this.name}`);
             console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending config: ${JSON.stringify(this._data)}`);
             console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending data: ${JSON.stringify(this.data)}`);
         }
