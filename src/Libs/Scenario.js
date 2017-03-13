@@ -55,9 +55,7 @@ class Scenario {
         let localData = {};
 
         if (this._data.debug) {
-            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this._data.worker}Worker#${worker.pid} for ${this.name}`);
-            console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending config: ${JSON.stringify(this._data)}`);
-            console.log(`${chalk.green(`[syrup.${this.name}]`)} Sending data: ${JSON.stringify(this.data)}`);
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this._data.worker}Worker#${worker.pid} for ${this.name} with  ${JSON.stringify(this)}`);
         }
 
         worker.on('message', (msg) => {
@@ -67,15 +65,30 @@ class Scenario {
                 } catch (error) {
                     this._data.report = msg.output;
                 }
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Report received from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(this._data.report)}`);
+                }
             }
 
             if (msg.save) {
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Data saved from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(msg.save)}`);
+                }
                 _.set(localData, msg.save.path, msg.save.data);
             }
 
-            if (msg.teardown) {
+            if (msg.log) {
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Log output received: ${msg.log}`);
+                }
+            }
+
+            if (msg.exit) {
                 this._data.finished = true;
-                worker.kill();
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Teardown message received from ${this._data.worker}Worker#${worker.pid}`);
+                }
+                setTimeout(() => worker.kill(), 1000);
             }
         });
 
