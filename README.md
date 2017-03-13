@@ -37,9 +37,19 @@ Syrup allows you to manage mocha tests. Scenarios (mocha tests) are registered
 before being put into a run order according to their dependancies, then run by a
 worker process. Scenarios that can sucessfully run at the same time will do so.
 
-### What is a worker?
+#### What is a worker?
 
 A worker is a forked process run by syrup to process a registered scenario. It will typically bootstrap some functionality into the mocha test such as a webdriver browser object.
+
+#### Options
+
+##### Debugging
+
+Enable debugging to get console logging on internal actions as they take place.
+
+```javascript
+syrup.enableDebug();
+```
 
 ## Available Workers
 
