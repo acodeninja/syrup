@@ -42,16 +42,16 @@ class Syrup {
             pourProgressUpdate(error, prorgess);
         });
         if (this._debugging) {
-            console.log(`${chalk.green('[syrup]')} Starting syrup with the following set up:`);
-
-            console.log(`${chalk.green('[syrup]')} Run order:`)
-            _.each(this._queue._runOrder, (jobs, order) => {
-                console.log(`${chalk.green('[syrup]')} Run ${order+1}: ${jobs.join(', ')}`);
-            });
-
+            console.log(`${chalk.green('[syrup]')} Run order: ${JSON.stringify(this._queue._runOrder)}`);
             console.log(`${chalk.green('[syrup]')} Test Configuration: ${JSON.stringify(this._config.data)}`);
         }
-        this._queue.run(function (error, results) {
+        this._queue.run((error, results) => {
+            if (error) {
+                console.log(`${chalk.red('[syrup] [error]')} Tests finished with error: ${error} and results: ${JSON.stringify(results)}`);
+            }
+            if (this._debugging) {
+                console.log(`${chalk.green('[syrup] [results]')} ${JSON.stringify(results)}`);
+            }
             donePouring(error, results);
         });
     }
