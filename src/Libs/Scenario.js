@@ -5,8 +5,12 @@ const chalk = require('chalk');
 const util = require('util');
 const child_process = require('child_process');
 
+const Utils = require('./Utils');
+
 class Scenario {
     constructor(data) {
+        this._utils = new Utils;
+
         let defaultData = {
             dependsOn: [],
             worker: 'Console',
@@ -35,22 +39,7 @@ class Scenario {
         return this._data.report;
     }
     updateData(data) {
-        this._data.data = this.deepExtend(this._data.data, data);
-    }
-    deepExtend(target, source) {
-        for (var prop in source) {
-            if (
-                prop in target &&
-                typeof(target[prop]) == 'object' &&
-                typeof(source[prop]) == 'object'
-            ) {
-                this.deepExtend(target[prop], source[prop]);
-            } else {
-                target[prop] = source[prop];
-            }
-        }
-
-        return target;
+        this._data.data = this._utils.deepExtend(this._data.data, data);
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
