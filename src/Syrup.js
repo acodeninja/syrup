@@ -39,11 +39,11 @@ class Syrup {
     }
     pour(donePouring, pourProgressUpdate) {
         if (typeof donePouring != 'function') {
-            donePouring = () => {};
+            donePouring = (error, results) => {};
             this._debugging = true;
         }
         if (typeof pourProgressUpdate != 'function') {
-            pourProgressUpdate = () => {};
+            pourProgressUpdate = (error, progress) => {};
         }
 
         this._queue.initialise(function (error, prorgess) {
