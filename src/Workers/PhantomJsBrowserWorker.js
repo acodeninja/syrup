@@ -25,12 +25,12 @@ class PhantomJsBrowserWorker extends BrowserWorker {
             let upAndRunning = `${data}`.match(/running on port ([\d]+)/);
 
             if(failedToStart) {
-                process.send({ log: `PhantomJs failed to start on :${phantomJsPort}` });
+                process.send({ control: `PhantomJs failed to start on :${phantomJsPort}` });
                 process.send({ exit: true });
             }
 
             if(upAndRunning) {
-                process.send({ log: `PhantomJs started on :${phantomJsPort}` });
+                process.send({ control: `PhantomJs started on :${phantomJsPort}` });
 
                 if(typeof global.Browser === 'undefined') {
                     global.Browser = WebDriver.remote({
@@ -43,10 +43,10 @@ class PhantomJsBrowserWorker extends BrowserWorker {
 
                 super.setup(() => {
                     Browser.init().then(() => {
-                        process.send({ log: `Browser started on :${phantomJsPort}` });
+                        process.send({ control: `Browser started on :${phantomJsPort}` });
                         done();
                     }, () => {
-                        process.send({ log: `Browser failed to start on :${phantomJsPort}` });
+                        process.send({ control: `Browser failed to start on :${phantomJsPort}` });
                         process.send({ exit: true });
                     });
                 });
@@ -54,15 +54,15 @@ class PhantomJsBrowserWorker extends BrowserWorker {
         });
 
         this.phantomService.stderr.on('data', (data) => {
-          process.send({ log: `PhantomJs threw an error: ${data}` });
+          process.send({ control: `PhantomJs threw an error: ${data}` });
         });
 
         this.phantomService.on('error', (code) => {
-          process.send({ log: `PhantomJs exited with error ${code}` });
+          process.send({ control: `PhantomJs exited with error ${code}` });
         });
 
         this.phantomService.on('close', (code) => {
-          process.send({ log: `PhantomJs exited with code ${code}` });
+          process.send({ control: `PhantomJs exited with code ${code}` });
         });
     }
     teardown(done) {
