@@ -6,11 +6,13 @@ const chalk = require('chalk');
 
 const Queue = require('./Libs/Queue');
 const Config = require('./Libs/Config');
+const Utils = require('./Libs/Utils');
 
 class Syrup {
     constructor() {
         this._queue = new Queue;
         this._config = new Config;
+        this._utils = new Utils;
         this._debugging = false;
         this._globalsFile = false;
     }
@@ -29,18 +31,16 @@ class Syrup {
 
         return this;
     }
-    scenario(name, entrypoint, dependsOn, worker) {
+    scenario(scenarioInputOptions) {
         let scenarioOptions = {
-            name: name,
-            entrypoint: entrypoint,
-            dependsOn: dependsOn ? dependsOn : [],
-            worker: worker != undefined ? worker : 'Console',
+            dependsOn: [],
+            worker: 'Console',
             config: this._config.data,
             debug: this._debugging,
             globals: this._globalsFile,
         };
 
-        this._queue.add(scenarioOptions);
+        this._queue.add(this._utils.deepExtend(scenarioOptions, scenarioInputOptions));
 
         return this;
     }
