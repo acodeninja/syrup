@@ -18,7 +18,9 @@ class Scenario {
         };
 
         this._data = _.extend(defaultData, data);
-        this._data.data.Test = data.config.Test;
+        if (data.config && data.config.Test) {
+            this._data.data.Test = data.config.Test;
+        }
     }
     get name() {
         return this._data.name;
