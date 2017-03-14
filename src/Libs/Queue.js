@@ -29,7 +29,7 @@ class Queue {
             throw new QueueFrozenError;
         }
         if (_.keys(this._scenarios).indexOf(scenario.name) != -1) {
-            throw new ScenarioExistsError('test');
+            throw new ScenarioExistsError;
         }
 
         this._scenarios[scenario.name] = new Scenario(scenario);
