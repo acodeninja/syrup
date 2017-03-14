@@ -71,6 +71,17 @@ class Worker {
 
             return theSnippet;
         };
+
+        if (this.scenario.globals) {
+            try {
+                _.each(require(this.scenario.globals), (globalsModule, moduleName) => {
+                    global[moduleName] = globalsModule;
+                    process.send({ log: `Adding module ${moduleName} to global` });
+                });
+            } catch (err) {
+
+            }
+        }
     }
 }
 
