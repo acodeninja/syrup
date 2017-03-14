@@ -1,8 +1,21 @@
 const syrup = require('../../');
 
 syrup.enableDebug()
-    .scenario('array', `${__dirname}/test-array`)
-    .scenario('object', `${__dirname}/test-object`)
-    .scenario('save', `${__dirname}/test-save`)
-    .scenario('get', `${__dirname}/test-get`, ['save'])
+    .scenario({
+        name: 'array',
+        entrypoint: `${__dirname}/test-array`
+    })
+    .scenario({
+        name: 'object',
+        entrypoint: `${__dirname}/test-object`
+    })
+    .scenario({
+        name: 'save',
+        entrypoint: `${__dirname}/test-save`
+    })
+    .scenario({
+        name: 'get',
+        entrypoint: `${__dirname}/test-get`,
+        dependsOn: ['save']
+    })
     .pour();

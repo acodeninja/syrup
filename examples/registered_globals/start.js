@@ -2,6 +2,12 @@ const syrup = require('../../');
 
 syrup.enableDebug()
     .registerGlobals(`${__dirname}/globals.js`)
-    .scenario('array', `${__dirname}/test-array`)
-    .scenario('object', `${__dirname}/test-object`)
+    .scenario({
+        name: 'array',
+        entrypoint: `${__dirname}/test-array`
+    })
+    .scenario({
+        name: 'object',
+        entrypoint: `${__dirname}/test-object`
+    })
     .pour();
