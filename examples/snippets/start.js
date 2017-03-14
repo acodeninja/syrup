@@ -1,7 +1,7 @@
 const syrup = require('../../');
 
-syrup.config(`${__dirname}/config.yaml`)
-    .enableDebug()
+syrup.enableDebug()
+    .config(`${__dirname}/config.yaml`)
     .scenario({
         name: 'snippets - 1',
         entrypoint: `${__dirname}/test-snippets`,
