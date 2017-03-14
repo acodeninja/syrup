@@ -10,6 +10,9 @@ class ConsoleWorker extends Worker {
     setup(done) {
         super.setup(done);
     }
+    run(done) {
+        super.run(done);
+    }
     teardown(done) {
         super.teardown(done);
     }

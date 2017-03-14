@@ -5,6 +5,7 @@ const chalk = require('chalk');
 
 const Faker = require('../Libs/Faker');
 const Mocha = require('mocha');
+const Log = require('../Libs/Log');
 
 class Worker {
     constructor(scenario) {
@@ -19,6 +20,23 @@ class Worker {
     setup(done) {
         done();
     }
+    circularJsonParser(o) {
+        var cache = [];
+        var output = '';
+
+        output = JSON.stringify(o, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    return;
+                }
+                cache.push(value);
+            }
+            return value;
+        });
+
+        cache = null;
+        return output;
+    }
     run(done) {
         let output = '';
 
@@ -31,16 +49,16 @@ class Worker {
         });
 
         runner.on('test', (test) => {
-            process.send({ log: `Test started: ${test.title}` });
+            process.send({ mochaUpdate: { type: 'start', output: this.circularJsonParser(test) } });
         });
         runner.on('test end', (test) => {
-            process.send({ log: `Test finished: ${test.title}` });
+            process.send({ mochaUpdate: { type: 'end', output: this.circularJsonParser(test) } });
         });
         runner.on('pass', (test) => {
-            process.send({ log: `Test passed: ${test.title}` });
+            process.send({ mochaUpdate: { type: 'pass', output: this.circularJsonParser(test) } });
         });
         runner.on('fail', (test) => {
-            process.send({ log: `Test failed: ${test.title}` });
+            process.send({ mochaUpdate: { type: 'fail', output: this.circularJsonParser(test) } });
         });
     }
     teardown(done) {
@@ -71,6 +89,10 @@ class Worker {
 
             return theSnippet;
         };
+
+        global.Log = (message) => {
+            process.send({ log: `\b${chalk.magenta('[log]')} ${message}` });
+        }
 
         if (this.scenario.globals) {
             try {

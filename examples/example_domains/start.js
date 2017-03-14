@@ -3,15 +3,13 @@ const syrup = require('../../');
 syrup.enableDebug()
     .config(`${__dirname}/config.yaml`)
     .scenario({
-        name: 'example.org - 1',
-        entrypoint: `${__dirname}/test-example.org`,
-        dependsOn: [],
-        worker: 'ChromeBrowser'
+        name: 'example.com',
+        entrypoint: `${__dirname}/test-example.com`,
+        worker: 'PhantomJsBrowser'
     })
     .scenario({
-        name: 'example.org - 2',
+        name: 'example.org',
         entrypoint: `${__dirname}/test-example.org`,
-        dependsOn: [],
-        worker: 'ChromeBrowser'
+        worker: 'PhantomJsBrowser'
     })
     .pour();
