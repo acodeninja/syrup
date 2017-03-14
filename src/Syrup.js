@@ -8,6 +8,8 @@ const Queue = require('./Libs/Queue');
 const Config = require('./Libs/Config');
 const Utils = require('./Libs/Utils');
 
+const ScenarioInputInvalid = require('./Errors/ScenarioInputInvalid');
+
 class Syrup {
     constructor() {
         this._queue = new Queue;
@@ -39,6 +41,13 @@ class Syrup {
             debug: this._debugging,
             globals: this._globalsFile,
         };
+
+        if (
+            !scenarioInputOptions.name ||
+            !scenarioInputOptions.entrypoint
+        ) {
+            throw new ScenarioInputInvalid(scenarioInputOptions);
+        }
 
         this._queue.add(this._utils.deepExtend(scenarioOptions, scenarioInputOptions));
 
