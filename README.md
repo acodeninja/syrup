@@ -7,20 +7,20 @@ Extended mocha testing, with file based snippets, test parallelism, and test dep
 const syrup = require('syrup');
 
 syrup.scenario(
-    // Register a test called array
+    // Register a scenario called array
     'array',
     // Path to a mocha test
     `${__dirname}/tests/array`
 );
 
 syrup.scenario(
-    // Register a test called object
+    // Register a scenario called object
     'object',
     // Path to a mocha test
     `${__dirname}/tests/object`,
-    // This test depends on the array test to complete first
+    // This test depends on the array scenario to complete first
     ['array'],
-    // This test runs on the default Consoler Worker
+    // This scenario runs on the default Consoler Worker
     'Console'
 );
 
@@ -37,9 +37,38 @@ Syrup allows you to manage mocha tests. Scenarios (mocha tests) are registered
 before being put into a run order according to their dependancies, then run by a
 worker process. Scenarios that can sucessfully run at the same time will do so.
 
-### What is a worker?
+**Registering a scenario with dependancies**
+
+```javascript
+syrup.scenario(
+    // Register a scenario called object
+    'object',
+    // Path to a mocha test
+    `${__dirname}/tests/object`,
+    // This scenario depends on the array scenario to complete first
+    ['array'],
+    // This scenario runs on the default Consoler Worker
+    'Console'
+);
+```
+
+#### Scenarios and the Dependancy Tree
+
+Syrup makes use of a dependancy tree to allow for parallelism with tests, this can be leveraged with the third argument of the scenario method, see above for more.
+
+#### What is a worker?
 
 A worker is a forked process run by syrup to process a registered scenario. It will typically bootstrap some functionality into the mocha test such as a webdriver browser object.
+
+#### Options
+
+##### Debugging
+
+Enable debugging to get console logging on internal actions as they take place.
+
+```javascript
+syrup.enableDebug();
+```
 
 ## Available Workers
 

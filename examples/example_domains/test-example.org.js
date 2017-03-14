@@ -4,9 +4,10 @@ describe('Example.com', function() {
         it('should navigate to example.org', () =>
             Browser.url('http://example.org')
         );
-        it('should find a heading containing "Example Domain"', () =>
+        it('should find a heading containing "Example Domain"', (done) => {
             Browser.getText('h1')
                 .then((text) => assert(text == 'Example Domain'))
+                .then(done);
         );
     });
 });

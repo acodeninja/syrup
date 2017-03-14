@@ -1,8 +1,10 @@
 'use strict';
 
+const _ = require('lodash');
+const chalk = require('chalk');
+
 const Faker = require('../Libs/Faker');
 const Mocha = require('mocha');
-const _ = require('lodash');
 
 class Worker {
     constructor(scenario) {
@@ -41,9 +43,6 @@ class Worker {
     setup(done) {
         done();
     }
-    teardown(done) {
-        done();
-    }
     run(done) {
         let output = '';
 
@@ -51,10 +50,25 @@ class Worker {
             output += str;
         };
 
-        this.mocha.run((failures) => {
-            process.send({ output: output });
-            done();
+        let runner = this.mocha.run((failures) => {
+            done(output);
         });
+
+        runner.on('test', (test) => {
+            process.send({ log: `Test started: ${test.title}` });
+        });
+        runner.on('test end', (test) => {
+            process.send({ log: `Test finished: ${test.title}` });
+        });
+        runner.on('pass', (test) => {
+            process.send({ log: `Test passed: ${test.title}` });
+        });
+        runner.on('fail', (test) => {
+            process.send({ log: `Test failed: ${test.title}` });
+        });
+    }
+    teardown(done) {
+        done();
     }
 }
 

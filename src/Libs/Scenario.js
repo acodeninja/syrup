@@ -1,6 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
+const util = require('util');
 const child_process = require('child_process');
 
 class Scenario {
@@ -11,7 +13,8 @@ class Scenario {
             finished: false,
             report: null,
             data: {},
-            config: {}
+            config: {},
+            debug: false
         };
 
         this._data = _.extend(defaultData, data);
@@ -30,11 +33,30 @@ class Scenario {
         return this._data.report;
     }
     updateData(data) {
-        this._data.data = _.extend(this._data.data, data);
+        this._data.data = this.deepExtend(this._data.data, data);
+    }
+    deepExtend(target, source) {
+        for (var prop in source) {
+            if (
+                prop in target &&
+                typeof(target[prop]) == 'object' &&
+                typeof(source[prop]) == 'object'
+            ) {
+                this.deepExtend(target[prop], source[prop]);
+            } else {
+                target[prop] = source[prop];
+            }
+        }
+
+        return target;
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
         let localData = {};
+
+        if (this._data.debug) {
+            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this._data.worker}Worker#${worker.pid} for ${this.name} with  ${JSON.stringify(this)}`);
+        }
 
         worker.on('message', (msg) => {
             if (msg.output) {
@@ -43,15 +65,30 @@ class Scenario {
                 } catch (error) {
                     this._data.report = msg.output;
                 }
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Report received from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(this._data.report)}`);
+                }
             }
 
             if (msg.save) {
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Data saved from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(msg.save)}`);
+                }
                 _.set(localData, msg.save.path, msg.save.data);
             }
 
-            if (msg.teardown) {
+            if (msg.log) {
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Log output received: ${msg.log}`);
+                }
+            }
+
+            if (msg.exit) {
                 this._data.finished = true;
-                worker.kill();
+                if (this._data.debug) {
+                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Teardown message received from ${this._data.worker}Worker#${worker.pid}`);
+                }
+                setTimeout(() => worker.kill(), 1000);
             }
         });
 
