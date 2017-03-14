@@ -2,14 +2,23 @@
 
 const _ = require('lodash');
 const chalk = require('chalk');
-const util = require('util');
 const child_process = require('child_process');
+const util = require('util');
 
+const Log = require('./Log');
 const Utils = require('./Utils');
 
 class Scenario {
     constructor(data) {
+        this._log = new Log({ scenario: data.name });
         this._utils = new Utils;
+
+        if (
+            !data.name ||
+            !data.entrypoint
+        ) {
+            throw new ScenarioInputInvalid(scenarioInputOptions);
+        }
 
         let defaultData = {
             dependsOn: [],
@@ -43,10 +52,11 @@ class Scenario {
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
+        let log = new Log({ scenario: this.name, worker: `${this._data.worker}Worker#${worker.pid}` });
         let localData = {};
 
         if (this._data.debug) {
-            console.log(`${chalk.green(`[syrup.${this.name}]`)} Starting ${this._data.worker}Worker#${worker.pid} for ${this.name} with  ${JSON.stringify(this)}`);
+            log.control(`starting`);
         }
 
         worker.on('message', (msg) => {
@@ -57,29 +67,38 @@ class Scenario {
                     this._data.report = msg.output;
                 }
                 if (this._data.debug) {
-                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Report received from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(this._data.report)}`);
+                    log.report('mocha', this._data.report);
                 }
             }
 
             if (msg.save) {
                 if (this._data.debug) {
-                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Data saved from ${this._data.worker}Worker#${worker.pid} ${JSON.stringify(msg.save)}`);
+                    log.log(`\b${chalk.magenta('[data]')} ${JSON.stringify(msg.save)}`);
                 }
                 _.set(localData, msg.save.path, msg.save.data);
             }
 
             if (msg.log) {
                 if (this._data.debug) {
-                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Log output received: ${msg.log}`);
+                    log.log(`${msg.log}`);
+                }
+            }
+
+            if (msg.control) {
+                if (this._data.debug) {
+                    log.control(`${msg.control}`);
+                }
+            }
+
+            if (msg.mochaUpdate) {
+                if (this._data.debug) {
+                    log.update('mocha', msg.mochaUpdate);
                 }
             }
 
             if (msg.exit) {
                 this._data.finished = true;
-                if (this._data.debug) {
-                    console.log(`${chalk.green(`[syrup.${this.name}]`)} ${chalk.blue(`[${this._data.worker}Worker#${worker.pid}]`)} Teardown message received from ${this._data.worker}Worker#${worker.pid}`);
-                }
-                setTimeout(() => worker.kill(), 1000);
+                worker.kill();
             }
         });
 

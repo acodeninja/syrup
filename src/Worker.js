@@ -1,7 +1,5 @@
 'use strict';
 
-const chalk = require('chalk');
-
 process.on('message', (message) => {
     let worker = false;
     let data = {};
@@ -14,12 +12,12 @@ process.on('message', (message) => {
         worker = new Worker(scenario);
 
         worker.setup(() => {
-            process.send({ log: `scenario ${scenario.name} has been set up` });
+            process.send({ control: `setup done` });
             worker.run((output) => {
-                process.send({ log: `scenario ${scenario.name} has been run` });
+                process.send({ control: `scenario finished` });
                 process.send({ output: output });
                 worker.teardown(() => {
-                    process.send({ log: `scenario ${scenario.name} has been torn down` });
+                    process.send({ control: `scenario torn down` });
                     process.send({ exit: true });
                 })
             })

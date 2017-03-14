@@ -4,19 +4,21 @@ const util = require('util');
 const _ = require('lodash');
 const chalk = require('chalk');
 
-const Queue = require('./Libs/Queue');
 const Config = require('./Libs/Config');
+const Log = require('./Libs/Log');
+const Queue = require('./Libs/Queue');
 const Utils = require('./Libs/Utils');
 
 const ScenarioInputInvalid = require('./Errors/ScenarioInputInvalid');
 
 class Syrup {
     constructor() {
-        this._queue = new Queue;
         this._config = new Config;
-        this._utils = new Utils;
         this._debugging = false;
         this._globalsFile = false;
+        this._log = new Log;
+        this._queue = new Queue;
+        this._utils = new Utils;
     }
     enableDebug() {
         this._debugging = true;
@@ -41,13 +43,6 @@ class Syrup {
             debug: this._debugging,
             globals: this._globalsFile,
         };
-
-        if (
-            !scenarioInputOptions.name ||
-            !scenarioInputOptions.entrypoint
-        ) {
-            throw new ScenarioInputInvalid(scenarioInputOptions);
-        }
 
         this._queue.add(
             this._utils.deepExtend(
@@ -80,15 +75,15 @@ class Syrup {
             pourProgressUpdate(error, prorgess);
         });
         if (this._debugging) {
-            console.log(`${chalk.green('[syrup]')} Run grouping: ${JSON.stringify(this._queue._runOrder)}`);
-            console.log(`${chalk.green('[syrup]')} Test Configuration: ${JSON.stringify(this._config.data)}`);
+            this._log.log(`\b${chalk.magenta('[runs]')} ${JSON.stringify(this._queue._runOrder)}`);
+            this._log.log(`\b${chalk.magenta('[config]')} ${JSON.stringify(this._config.data)}`);
         }
         this._queue.run((error, results) => {
             if (error) {
-                console.log(`${chalk.red('[syrup] [error]')} Tests finished with error: ${error} and results: ${JSON.stringify(results)}`);
+                this._log.log(`Tests finished with error: ${error} and results: ${JSON.stringify(results)}`);
             }
             if (this._debugging) {
-                console.log(`${chalk.green('[syrup] [results]')} ${JSON.stringify(results)}`);
+                this._log.results(JSON.stringify(results));
             }
             donePouring(error, results);
         });
