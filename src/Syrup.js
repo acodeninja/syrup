@@ -49,7 +49,21 @@ class Syrup {
             throw new ScenarioInputInvalid(scenarioInputOptions);
         }
 
-        this._queue.add(this._utils.deepExtend(scenarioOptions, scenarioInputOptions));
+        this._queue.add(
+            this._utils.deepExtend(
+                scenarioOptions,
+                _.pick(
+                    scenarioInputOptions,
+                    [
+                        'name',
+                        'entrypoint',
+                        'dependsOn',
+                        'notes',
+                        'worker'
+                    ]
+                )
+            )
+        );
 
         return this;
     }
