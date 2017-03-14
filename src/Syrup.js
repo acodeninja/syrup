@@ -12,9 +12,15 @@ class Syrup {
         this._queue = new Queue;
         this._config = new Config;
         this._debugging = false;
+        this._globalsFile = false;
     }
     enableDebug() {
         this._debugging = true;
+
+        return this;
+    }
+    registerGlobals(path) {
+        this._globalsFile = require('path').resolve(path);
 
         return this;
     }
@@ -30,7 +36,8 @@ class Syrup {
             dependsOn: dependsOn ? dependsOn : [],
             worker: worker != undefined ? worker : 'Console',
             config: this._config.data,
-            debug: this._debugging
+            debug: this._debugging,
+            globals: this._globalsFile,
         };
 
         this._queue.add(scenarioOptions);

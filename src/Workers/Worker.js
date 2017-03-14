@@ -14,31 +14,7 @@ class Worker {
         this.mocha.reporter('json');
         this.mocha.timeout(0);
         this.data = scenario.data;
-
-        // Register worker process globals
-        global.Faker = new Faker;
-        global.Save = (path, data) => {
-            _.set(this.data, path, data);
-
-            process.send({
-                save: {
-                    path: path,
-                    data: data
-                }
-            });
-        };
-
-        global.Get = (path) => _.get(this.data, path);
-
-        global.Runs = (path) => {
-            var theSnippet = require(process.cwd() + '/' + path);
-
-            if (typeof theSnippet == 'function') {
-                theSnippet();
-            }
-
-            return theSnippet;
-        };
+        this.setGlobals();
     }
     setup(done) {
         done();
@@ -69,6 +45,43 @@ class Worker {
     }
     teardown(done) {
         done();
+    }
+    setGlobals() {
+        global.Faker = new Faker;
+
+        global.Save = (path, data) => {
+            _.set(this.data, path, data);
+
+            process.send({
+                save: {
+                    path: path,
+                    data: data
+                }
+            });
+        };
+
+        global.Get = (path) => _.get(this.data, path);
+
+        global.Runs = (path) => {
+            var theSnippet = require(process.cwd() + '/' + path);
+
+            if (typeof theSnippet == 'function') {
+                theSnippet();
+            }
+
+            return theSnippet;
+        };
+
+        if (this.scenario.globals) {
+            try {
+                _.each(require(this.scenario.globals), (globalsModule, moduleName) => {
+                    global[moduleName] = globalsModule;
+                    process.send({ log: `Adding module ${moduleName} to global` });
+                });
+            } catch (err) {
+
+            }
+        }
     }
 }
 
