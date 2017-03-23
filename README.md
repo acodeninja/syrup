@@ -6,50 +6,38 @@ Extended mocha testing, with file based snippets, test parallelism, and test dep
 ```javascript
 const syrup = require('syrup');
 
-syrup.scenario(
-    // Register a scenario called array
-    'array',
-    // Path to a mocha test
-    `${__dirname}/tests/array`
-);
-
-syrup.scenario(
-    // Register a scenario called object
-    'object',
-    // Path to a mocha test
-    `${__dirname}/tests/object`,
-    // This test depends on the array scenario to complete first
-    ['array'],
-    // This scenario runs on the default Consoler Worker
-    'Console'
-);
-
-syrup.pour((error, results) => {
-    // catch end results
-}, (error, progress) => {
-    // catch prorgess updates
-});
+syrup.scenario({
+        name: 'array', // Register a scenario called array
+        entrypoint: `${__dirname}/tests/array` // Path to a mocha test
+    })
+    .scenario({
+        name: 'object', // Register a scenario called object
+        entrypoint: `${__dirname}/tests/object`, // Path to a mocha test
+        dependsOn: ['array'], // This test depends on the array scenario to complete first
+        worker: 'Console' // This scenario runs on the default Consoler Worker
+    })
+    .pour((error, results) => {
+        console.log(JSON.stringify(results)); // catch end results
+    }, (error, progress) => {
+        console.log(JSON.stringify(progress)); // catch progress updates
+    });
 ```
 
 ### What does syrup do?
 
 Syrup allows you to manage mocha tests. Scenarios (mocha tests) are registered
 before being put into a run order according to their dependancies, then run by a
-worker process. Scenarios that can sucessfully run at the same time will do so.
+worker process. Scenarios that can successfully run at the same time will do so.
 
 **Registering a scenario with dependancies**
 
 ```javascript
-syrup.scenario(
-    // Register a scenario called object
-    'object',
-    // Path to a mocha test
-    `${__dirname}/tests/object`,
-    // This scenario depends on the array scenario to complete first
-    ['array'],
-    // This scenario runs on the default Consoler Worker
-    'Console'
-);
+syrup.scenario({
+    name: 'object', // Register a scenario called object
+    entrypoint: `${__dirname}/tests/object`, // Path to a mocha test
+    dependsOn: ['array'], // This test depends on the array scenario to complete first
+    worker: 'Console' // This scenario runs on the default Consoler Worker
+})
 ```
 
 #### Scenarios and the Dependancy Tree
