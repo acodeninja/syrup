@@ -12,6 +12,7 @@ class Scenario {
     constructor(data) {
         this._log = new Log({ scenario: data.name });
         this._utils = new Utils;
+        this._replStarted = false;
 
         if (
             !data.name ||
@@ -63,6 +64,11 @@ class Scenario {
         }
 
         worker.on('message', (msg) => {
+
+            if (!msg.repl && this._replStarted) {
+                process.exit();
+            }
+
             if (msg.output) {
                 try {
                     this._data.report = JSON.parse(msg.output);
@@ -101,6 +107,7 @@ class Scenario {
 
             if (msg.repl) {
                 console.log(msg.repl);
+                this._replStarted = true;
             }
 
             if (msg.exit) {
