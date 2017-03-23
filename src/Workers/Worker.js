@@ -42,6 +42,7 @@ class Worker {
 
         process.stdout.write = (str) => {
             output += str;
+            process.send({ repl: str });
         };
 
         let runner = this.mocha.run((failures) => {
