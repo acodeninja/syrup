@@ -12,6 +12,7 @@ class Scenario {
     constructor(data) {
         this._log = new Log({ scenario: data.name });
         this._utils = new Utils;
+        this._replStarted = false;
 
         if (
             !data.name ||
@@ -52,14 +53,22 @@ class Scenario {
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
-        let log = new Log({ scenario: this.name, worker: `${this._data.worker}Worker#${worker.pid}` });
         let localData = {};
+        let log = new Log({
+            scenario: this.name,
+            worker: `${this._data.worker}Worker#${worker.pid}`
+        });
 
         if (this._data.debug) {
             log.control(`starting`);
         }
 
         worker.on('message', (msg) => {
+
+            if (!msg.repl && this._replStarted) {
+                process.exit();
+            }
+
             if (msg.output) {
                 try {
                     this._data.report = JSON.parse(msg.output);
@@ -94,6 +103,11 @@ class Scenario {
                 if (this._data.debug) {
                     log.update('mocha', msg.mochaUpdate);
                 }
+            }
+
+            if (msg.repl) {
+                console.log(msg.repl);
+                this._replStarted = true;
             }
 
             if (msg.exit) {
