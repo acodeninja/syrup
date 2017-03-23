@@ -99,6 +99,10 @@ class Scenario {
                 }
             }
 
+            if (msg.repl) {
+                console.log(msg.repl);
+            }
+
             if (msg.exit) {
                 this._data.finished = true;
                 worker.kill();
