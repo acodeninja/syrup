@@ -13,7 +13,7 @@ class PhantomJsBrowserWorker extends BrowserWorker {
         var phantomJsPort = Math.floor(Math.random() * (7000 - 6000 + 1)) + 6000;
 
         this.phantomService = child_process.spawn(
-            'phantomjs',
+            './phantomjs',
             ['--webdriver', `localhost:${phantomJsPort}`],
             {
                 cwd: `${__dirname}/../../node_modules/.bin/`
