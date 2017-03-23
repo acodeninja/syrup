@@ -52,8 +52,11 @@ class Scenario {
     }
     run(done) {
         let worker = child_process.fork(`${__dirname}/../Worker`);
-        let log = new Log({ scenario: this.name, worker: `${this._data.worker}Worker#${worker.pid}` });
         let localData = {};
+        let log = new Log({
+            scenario: this.name,
+            worker: `${this._data.worker}Worker#${worker.pid}`
+        });
 
         if (this._data.debug) {
             log.control(`starting`);
