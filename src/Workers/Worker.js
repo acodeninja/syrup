@@ -15,6 +15,7 @@ class Worker {
         this.mocha.reporter('json');
         this.mocha.timeout(0);
         this.data = scenario.data;
+        this._replStarted = false;
         this.setGlobals();
     }
     setup(done) {
@@ -42,7 +43,12 @@ class Worker {
 
         process.stdout.write = (str) => {
             output += str;
-            process.send({ repl: str });
+            let replRegex = /(Queue has stopped!)/;
+
+            if(str.match(replRegex) || this._replStarted) {
+                process.send({ repl: str });
+                this._replStarted = true;
+            }
         };
 
         let runner = this.mocha.run((failures) => {
