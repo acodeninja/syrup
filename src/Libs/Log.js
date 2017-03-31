@@ -16,7 +16,7 @@ class Log {
         let localPrefix = `${this._prefix}${chalk.cyan(`[report]`)} `;
 
         if (type = 'mocha') {
-            report = `Tests: ${report.stats.tests} Passed: ${report.stats.passes} Failed: ${report.stats.failures} Incopmlete: ${report.stats.pending} Duration: ${report.stats.duration}ms`;
+            report = `Tests: ${report.stats.tests} Passed: ${report.stats.passes} Failed: ${report.stats.failures} Incomplete: ${report.stats.pending} Duration: ${report.stats.duration}ms`;
         }
         console.log(localPrefix + report);
     }
