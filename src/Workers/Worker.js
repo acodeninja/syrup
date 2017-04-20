@@ -10,10 +10,12 @@ const Log = require('../Libs/Log');
 class Worker {
     constructor(scenario) {
         this.scenario = scenario;
+
         this.mocha = new Mocha();
         this.mocha.addFile(scenario.entrypoint);
         this.mocha.reporter('json');
-        this.mocha.timeout(0);
+        this.mocha.timeout(_.get('config.Timeout', scenario, 120000));
+
         this.data = scenario.data;
         this._replStarted = false;
         this.setGlobals();
