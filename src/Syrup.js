@@ -3,6 +3,7 @@
 const util = require('util');
 const _ = require('lodash');
 const chalk = require('chalk');
+const yargs = require('yargs').argv;
 
 const Config = require('./Libs/Config');
 const Log = require('./Libs/Log');
@@ -19,6 +20,10 @@ class Syrup {
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
+
+        if (yargs.debug) {
+            this.enableDebug();
+        }
     }
     enableDebug() {
         this._debugging = true;
