@@ -17,6 +17,7 @@ class Syrup {
         this._config = new Config;
         this._debugging = false;
         this._globalsFile = false;
+        this._logFile = false;
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
@@ -24,9 +25,18 @@ class Syrup {
         if (yargs.debug) {
             this.enableDebug();
         }
+
+        if (yargs.output) {
+            this.enableLogToFile(yargs.output);
+        }
     }
     enableDebug() {
         this._debugging = true;
+
+        return this;
+    }
+    enableLogToFile(path) {
+        this._logFile = require('path').resolve(path);
 
         return this;
     }
