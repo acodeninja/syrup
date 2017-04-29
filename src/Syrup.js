@@ -1,6 +1,7 @@
 'use strict';
 
 const util = require('util');
+const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const yargs = require('yargs').argv;
@@ -99,6 +100,9 @@ class Syrup {
             }
             if (this._debugging) {
                 this._log.results(JSON.stringify(results));
+            }
+            if (this._logFile) {
+                fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
             }
             donePouring(error, results);
         });
