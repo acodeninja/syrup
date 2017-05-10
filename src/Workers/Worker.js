@@ -86,6 +86,8 @@ class Worker {
                 }
             });
         };
+        
+        global.Scenario = this.scenario;
 
         global.Get = (path) => _.get(this.data, path);
 
