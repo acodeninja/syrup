@@ -79,11 +79,10 @@ class Syrup {
         return this;
     }
     pour(donePouring, pourProgressUpdate) {
-        if (typeof donePouring != 'function') {
+        if (typeof donePouring !== 'function') {
             donePouring = (error, results) => {};
-            this._debugging = true;
         }
-        if (typeof pourProgressUpdate != 'function') {
+        if (typeof pourProgressUpdate !== 'function') {
             pourProgressUpdate = (error, progress) => {};
         }
 
