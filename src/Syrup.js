@@ -17,6 +17,7 @@ class Syrup {
         this._debugging = !!(yargs.debug);
         this._globalsFile = false;
         this._logFile = (yargs.output) ? require('path').resolve(yargs.output) : false;
+        this._progressFile = (yargs.progress) ? require('path').resolve(yargs.progress) : false;
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
@@ -66,9 +67,13 @@ class Syrup {
             pourProgressUpdate = (error, progress) => {};
         }
 
-        this._queue.initialise(function (error, prorgess) {
-            pourProgressUpdate(error, prorgess);
+        this._queue.initialise((error, progress) => {
+            if (this._progressFile) {
+                fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
+            }
+            pourProgressUpdate(error, progress);
         });
+
         if (this._debugging) {
             this._log.log(`\b${chalk.magenta('[runs]')} ${JSON.stringify(this._queue._runOrder)}`);
             this._log.log(`\b${chalk.magenta('[config]')} ${JSON.stringify(this._config.data)}`);
