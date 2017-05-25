@@ -14,20 +14,12 @@ const Utils = require('./Libs/Utils');
 class Syrup {
     constructor() {
         this._config = new Config;
-        this._debugging = false;
+        this._debugging = !!(yargs.debug);
         this._globalsFile = false;
-        this._logFile = false;
+        this._logFile = (yargs.output) ? require('path').resolve(yargs.output) : false;
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
-
-        if (yargs.debug) {
-            this._debugging = true;
-        }
-
-        if (yargs.output) {
-            this._logFile = require('path').resolve(yargs.output);
-        }
     }
     registerGlobals(path) {
         this._globalsFile = require('path').resolve(path);
