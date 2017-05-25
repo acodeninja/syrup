@@ -1,6 +1,4 @@
-const syrup = require('../../');
-
-syrup
+require('../../')
     .registerGlobals(`${__dirname}/globals.js`)
     .scenario({
         name: 'array',

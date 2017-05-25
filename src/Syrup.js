@@ -74,7 +74,12 @@ class Syrup {
                 if (typeof this._progressFile === 'string') {
                     fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
                 } else {
-                    console.log(JSON.stringify(progress));
+                    let output = JSON.stringify(progress)
+                        .replace(/"done"/g, chalk.green("✔"))
+                        .replace(/"pending"/g, chalk.magenta("⚙"))
+                        .replace(/"failed"/g, chalk.red("✘"));
+
+                    console.log(output);
                 }
             }
             pourProgressUpdate(error, progress);

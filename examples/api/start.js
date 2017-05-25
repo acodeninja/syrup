@@ -1,6 +1,4 @@
-const syrup = require('../../');
-
-syrup
+require('../../')
     .scenario({
         name: 'githubApi',
         entrypoint: `${__dirname}/github-api`
