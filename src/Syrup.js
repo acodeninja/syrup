@@ -16,8 +16,10 @@ class Syrup {
         this._config = new Config;
         this._debugging = !!(yargs.debug);
         this._globalsFile = false;
-        this._logFile = (yargs.output) ? require('path').resolve(yargs.output) : false;
-        this._progressFile = (yargs.progress) ? require('path').resolve(yargs.progress) : false;
+        this._logFile = (typeof yargs.output === 'string') ?
+            require('path').resolve(yargs.output) : !!(yargs.output);
+        this._progressFile = (typeof yargs.progress === 'string') ?
+            require('path').resolve(yargs.progress) : !!(yargs.progress);
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
@@ -69,7 +71,11 @@ class Syrup {
 
         this._queue.initialise((error, progress) => {
             if (this._progressFile) {
-                fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
+                if (typeof this._progressFile === 'string') {
+                    fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
+                } else {
+                    console.log(JSON.stringify(progress));
+                }
             }
             pourProgressUpdate(error, progress);
         });
@@ -86,8 +92,13 @@ class Syrup {
                 this._log.results(JSON.stringify(results));
             }
             if (this._logFile) {
-                fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
+                if (typeof this._logFile === 'string') {
+                    fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
+                } else {
+                    console.log(JSON.stringify(results));
+                }
             }
+
             donePouring(error, results);
         });
     }
