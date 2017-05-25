@@ -1,6 +1,6 @@
 const syrup = require('../../');
 
-syrup.enableDebug()
+syrup
     .scenario({
         name: 'array',
         notes: 'Test that standard array methods work',

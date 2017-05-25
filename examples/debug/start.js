@@ -1,6 +1,6 @@
 const syrup = require('../../');
 
-syrup.enableDebug()
+syrup
     .scenario({
         name: 'example.com',
         entrypoint: `${__dirname}/test-example.com`,

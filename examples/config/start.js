@@ -1,6 +1,6 @@
 const syrup = require('../../');
 
-syrup.enableDebug()
+syrup
     .config(`${__dirname}/config.yaml`)
     .scenario({
         name: 'GetConfigData',

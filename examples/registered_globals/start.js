@@ -1,6 +1,6 @@
 const syrup = require('../../');
 
-syrup.enableDebug()
+syrup
     .registerGlobals(`${__dirname}/globals.js`)
     .scenario({
         name: 'array',
