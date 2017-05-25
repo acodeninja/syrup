@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 
+const Api = require('../Libs/Api');
 const Faker = require('../Libs/Faker');
 const Mocha = require('mocha');
 const Log = require('../Libs/Log');
@@ -88,6 +89,8 @@ class Worker {
         };
         
         global.Scenario = this.scenario;
+
+        global.Api = new Api;
 
         global.Get = (path) => _.get(this.data, path);
 
