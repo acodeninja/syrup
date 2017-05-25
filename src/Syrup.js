@@ -11,8 +11,6 @@ const Log = require('./Libs/Log');
 const Queue = require('./Libs/Queue');
 const Utils = require('./Libs/Utils');
 
-const ScenarioInputInvalid = require('./Errors/ScenarioInputInvalid');
-
 class Syrup {
     constructor() {
         this._config = new Config;
@@ -24,22 +22,12 @@ class Syrup {
         this._utils = new Utils;
 
         if (yargs.debug) {
-            this.enableDebug();
+            this._debugging = true;
         }
 
         if (yargs.output) {
-            this.enableLogToFile(yargs.output);
+            this._logFile = require('path').resolve(yargs.output);
         }
-    }
-    enableDebug() {
-        this._debugging = true;
-
-        return this;
-    }
-    enableLogToFile(path) {
-        this._logFile = require('path').resolve(path);
-
-        return this;
     }
     registerGlobals(path) {
         this._globalsFile = require('path').resolve(path);
