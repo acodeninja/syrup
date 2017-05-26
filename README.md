@@ -4,23 +4,32 @@ Extended mocha testing, with file based snippets, test parallelism, and test dep
 ## TL;DR
 
 ```javascript
-const syrup = require('syrup');
+require('syrup')
+    .scenario({
+        name: 'array',
+        // Register a scenario called array
 
-syrup.scenario({
-        name: 'array', // Register a scenario called array
-        entrypoint: `${__dirname}/tests/array` // Path to a mocha test
+        entrypoint: `${__dirname}/tests/array`
+        // Give a path to a mocha test
     })
     .scenario({
-        name: 'object', // Register a scenario called object
-        entrypoint: `${__dirname}/tests/object`, // Path to a mocha test
-        dependsOn: ['array'], // This test depends on the array scenario to complete first
-        worker: 'Console' // This scenario runs on the default Consoler Worker
+        name: 'example.com',
+        // Register a scenario called example.com
+
+        entrypoint: `${__dirname}/tests/example.com`,
+        // Give a path to a mocha test
+
+        dependsOn: ['array'],
+        // Tell syrup this test depends on the array scenario finishing first
+
+        worker: 'PhantomJsBrowser'
+        // Specify that we want to run the test inside the PhantomJsBrowser worker
     })
-    .pour((error, results) => {
-        console.log(JSON.stringify(results)); // catch end results
-    }, (error, progress) => {
-        console.log(JSON.stringify(progress)); // catch progress updates
-    });
+    .pour();
+```
+
+```bash
+$ node example.js --debug
 ```
 
 ### What does syrup do?
