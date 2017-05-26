@@ -1,6 +1,5 @@
-const syrup = require('../../');
-
-syrup.scenario({
+require('../../')
+    .scenario({
         name: 'array',
         entrypoint: `${__dirname}/test-array`
     })

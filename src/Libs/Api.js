@@ -1,7 +1,5 @@
 'use strict';
 
-const http = require('http');
-const https = require('https');
 const _ = require('lodash');
 const parse = require('url').parse;
 const Promise = require('promise');

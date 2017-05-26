@@ -11,35 +11,18 @@ const Log = require('./Libs/Log');
 const Queue = require('./Libs/Queue');
 const Utils = require('./Libs/Utils');
 
-const ScenarioInputInvalid = require('./Errors/ScenarioInputInvalid');
-
 class Syrup {
     constructor() {
         this._config = new Config;
-        this._debugging = false;
+        this._debugging = !!(yargs.debug);
         this._globalsFile = false;
-        this._logFile = false;
+        this._logFile = (typeof yargs.output === 'string') ?
+            require('path').resolve(yargs.output) : !!(yargs.output);
+        this._progressFile = (typeof yargs.progress === 'string') ?
+            require('path').resolve(yargs.progress) : !!(yargs.progress);
         this._log = new Log;
         this._queue = new Queue;
         this._utils = new Utils;
-
-        if (yargs.debug) {
-            this.enableDebug();
-        }
-
-        if (yargs.output) {
-            this.enableLogToFile(yargs.output);
-        }
-    }
-    enableDebug() {
-        this._debugging = true;
-
-        return this;
-    }
-    enableLogToFile(path) {
-        this._logFile = require('path').resolve(path);
-
-        return this;
     }
     registerGlobals(path) {
         this._globalsFile = require('path').resolve(path);
@@ -79,17 +62,29 @@ class Syrup {
         return this;
     }
     pour(donePouring, pourProgressUpdate) {
-        if (typeof donePouring != 'function') {
+        if (typeof donePouring !== 'function') {
             donePouring = (error, results) => {};
-            this._debugging = true;
         }
-        if (typeof pourProgressUpdate != 'function') {
+        if (typeof pourProgressUpdate !== 'function') {
             pourProgressUpdate = (error, progress) => {};
         }
 
-        this._queue.initialise(function (error, prorgess) {
-            pourProgressUpdate(error, prorgess);
+        this._queue.initialise((error, progress) => {
+            if (this._progressFile) {
+                if (typeof this._progressFile === 'string') {
+                    fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
+                } else {
+                    let output = JSON.stringify(progress)
+                        .replace(/"done"/g, chalk.green("✔"))
+                        .replace(/"pending"/g, chalk.magenta("⚙"))
+                        .replace(/"failed"/g, chalk.red("✘"));
+
+                    console.log(output);
+                }
+            }
+            pourProgressUpdate(error, progress);
         });
+
         if (this._debugging) {
             this._log.log(`\b${chalk.magenta('[runs]')} ${JSON.stringify(this._queue._runOrder)}`);
             this._log.log(`\b${chalk.magenta('[config]')} ${JSON.stringify(this._config.data)}`);
@@ -102,8 +97,13 @@ class Syrup {
                 this._log.results(JSON.stringify(results));
             }
             if (this._logFile) {
-                fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
+                if (typeof this._logFile === 'string') {
+                    fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
+                } else {
+                    console.log(JSON.stringify(results));
+                }
             }
+
             donePouring(error, results);
         });
     }

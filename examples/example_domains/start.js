@@ -1,6 +1,4 @@
-const syrup = require('../../');
-
-syrup.enableDebug()
+require('../../')
     .config(`${__dirname}/config.yaml`)
     .scenario({
         name: 'example.com',

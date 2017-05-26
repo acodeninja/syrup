@@ -95,9 +95,9 @@ class Worker {
         global.Get = (path) => _.get(this.data, path);
 
         global.Runs = (path) => {
-            var theSnippet = require(process.cwd() + '/' + path);
+            let theSnippet = require(process.cwd() + '/' + path);
 
-            if (typeof theSnippet == 'function') {
+            if (typeof theSnippet === 'function') {
                 theSnippet();
             }
 
@@ -106,7 +106,7 @@ class Worker {
 
         global.Log = (message) => {
             process.send({ log: `\b${chalk.magenta('[log]')} ${message}` });
-        }
+        };
 
         if (this.scenario.globals) {
             try {
