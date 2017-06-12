@@ -1,111 +1,155 @@
 'use strict';
 
-const util = require('util');
-const fs = require('fs');
 const _ = require('lodash');
-const chalk = require('chalk');
-const yargs = require('yargs').argv;
+const async = require('async');
 
-const Config = require('./Libs/Config');
-const Log = require('./Libs/Log');
-const Queue = require('./Libs/Queue');
-const Utils = require('./Libs/Utils');
+const EventsBus = require('./libs/EventsBus');
+const Scenario = require('./libs/Scenario');
+const Logger = require('./libs/Logger');
+
+const ScenarioAlreadyRegisteredError = require('./errors/ScenarioAlreadyRegisteredError');
+const NoScenariosRegisteredError = require('./errors/NoScenariosRegisteredError');
+const ScenarioDoesNotExistError = require('./errors/ScenarioDoesNotExistError');
 
 class Syrup {
+    /**
+     * Syrup constructor
+     */
     constructor() {
-        this._config = new Config;
-        this._debugging = !!(yargs.debug);
-        this._globalsFile = false;
-        this._logFile = (typeof yargs.output === 'string') ?
-            require('path').resolve(yargs.output) : !!(yargs.output);
-        this._progressFile = (typeof yargs.progress === 'string') ?
-            require('path').resolve(yargs.progress) : !!(yargs.progress);
-        this._log = new Log;
-        this._queue = new Queue;
-        this._utils = new Utils;
+        this.scenarios = {};
+        this._config = {};
+        this._waitingOn = [];
+        this._debugging = false;
     }
-    registerGlobals(path) {
-        this._globalsFile = require('path').resolve(path);
+
+    /**
+     *
+     * @param configuration
+     * @returns {Syrup}
+     */
+    config(config) {
+        this._config = config;
+        return this;
+    }
+
+    debug() {
+        this._debugging = true;
 
         return this;
     }
-    config(path) {
-        this._config.load(path);
+
+    /**
+     *
+     * @param onProgressUpdate
+     * @returns {Syrup}
+     */
+    progress(onProgressUpdate) {
+        let scenarios = {};
+        EventsBus.listen('syrup:started', (syrup) => {
+            _.each(syrup.scenarios, (scenario) => {
+                scenarios[scenario] = 'pending';
+            });
+            onProgressUpdate(scenarios);
+        });
+        EventsBus.listen('scenario:started', (scenario) => {
+            scenarios[scenario.name] = 'running';
+            onProgressUpdate(scenarios);
+        });
+        EventsBus.listen('scenario:finished', (scenario) => {
+            scenarios[scenario.name] = 'finished';
+            onProgressUpdate(scenarios);
+        });
 
         return this;
     }
-    scenario(scenarioInputOptions) {
-        let scenarioOptions = {
-            dependsOn: [],
-            worker: 'Console',
-            config: this._config.data,
-            debug: this._debugging,
-            globals: this._globalsFile,
-        };
 
-        this._queue.add(
-            this._utils.deepExtend(
-                scenarioOptions,
-                _.pick(
-                    scenarioInputOptions,
-                    [
-                        'name',
-                        'entrypoint',
-                        'dependsOn',
-                        'notes',
-                        'worker'
-                    ]
-                )
-            )
-        );
+    /**
+     *
+     * @param onPourFinished
+     * @returns {Syrup}
+     */
+    report(onPourFinished) {
+        EventsBus.listen('syrup:finished', (syrup) => {
+            onPourFinished(syrup);
+        });
 
         return this;
     }
-    pour(donePouring, pourProgressUpdate) {
-        if (typeof donePouring !== 'function') {
-            donePouring = (error, results) => {};
+
+    /**
+     *
+     * @param path
+     * @returns {Syrup}
+     */
+    globals(path) {
+
+        return this;
+    }
+
+    /**
+     *
+     * @param name
+     * @param options
+     * @returns {Syrup}
+     */
+    scenario(name, options) {
+        if (this.scenarios[name] !== undefined) {
+            throw new ScenarioAlreadyRegisteredError();
         }
-        if (typeof pourProgressUpdate !== 'function') {
-            pourProgressUpdate = (error, progress) => {};
+
+        this.scenarios[name] = options;
+        this._waitingOn.push(name);
+
+        return this;
+    }
+
+    /**
+     *
+     * @param done
+     */
+    pour(done) {
+        let firstRun = [];
+
+        if (Object.keys(this.scenarios).length === 0) {
+            throw new NoScenariosRegisteredError();
         }
 
-        this._queue.initialise((error, progress) => {
-            if (this._progressFile) {
-                if (typeof this._progressFile === 'string') {
-                    fs.writeFileSync(this._progressFile, JSON.stringify(progress), 'utf8');
-                } else {
-                    let output = JSON.stringify(progress)
-                        .replace(/"done"/g, chalk.green("✔"))
-                        .replace(/"pending"/g, chalk.magenta("⚙"))
-                        .replace(/"failed"/g, chalk.red("✘"));
+        _.each(this.scenarios, (options, name) => {
+            this.scenarios[name] = new Scenario(name, options);
 
-                    console.log(output);
+            _.each(this.scenarios[name].options.after, (scenario) => {
+                if (this.scenarios[scenario] === undefined) {
+                    throw new ScenarioDoesNotExistError();
                 }
+            });
+
+            if(this.scenarios[name].canStart()) {
+                firstRun.push(name);
             }
-            pourProgressUpdate(error, progress);
         });
 
         if (this._debugging) {
-            this._log.log(`\b${chalk.magenta('[runs]')} ${JSON.stringify(this._queue._runOrder)}`);
-            this._log.log(`\b${chalk.magenta('[config]')} ${JSON.stringify(this._config.data)}`);
+            new Logger('syrup');
         }
-        this._queue.run((error, results) => {
-            if (error) {
-                this._log.log(`Tests finished with error: ${error} and results: ${JSON.stringify(results)}`);
-            }
-            if (this._debugging) {
-                this._log.results(JSON.stringify(results));
-            }
-            if (this._logFile) {
-                if (typeof this._logFile === 'string') {
-                    fs.writeFileSync(this._logFile, JSON.stringify(results), 'utf8');
-                } else {
-                    console.log(JSON.stringify(results));
-                }
+
+        EventsBus.emit('syrup:started', { scenarios: _.keys(this.scenarios), config: this._config });
+
+        EventsBus.listen('scenario:finished', (data) => {
+            let index = this._waitingOn.indexOf(data.name);
+
+            if (
+                this._waitingOn.length > 0 &&
+                typeof this._waitingOn[index] !== 'undefined'
+            ) {
+                this._waitingOn.splice(index, 1);
             }
 
-            donePouring(error, results);
+            if (this._waitingOn.length === 0) {
+                setTimeout(() => EventsBus.emit('syrup:finished', this));
+            }
         });
+
+        async.parallel(_.map(firstRun, (name) => (done) => { this.scenarios[name].start(); done(); }));
     }
 }
 

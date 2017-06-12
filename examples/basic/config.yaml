@@ -1,0 +1,4 @@
+Browser:
+  host: 'localhost'
+  desiredCapabilities:
+    browserName: 'phantomjs'
