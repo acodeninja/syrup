@@ -1,9 +1,6 @@
 require('./bootstrap');
 
 describe('Running a scenario registerered with the syrup object', function () {
-    it('should call scenario(`name`, { })', function () {
-
-    });
     it('should see a NoScenariosRegisteredError if pour is called without any registered scenarios', function (done) {
         let syrup = new Syrup;
         try {
