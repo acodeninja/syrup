@@ -134,8 +134,8 @@ class Syrup {
 
         EventsBus.emit('syrup:started', { scenarios: _.keys(this.scenarios), config: this._config });
 
-        EventsBus.listen('scenario:finished', (data) => {
-            let index = this._waitingOn.indexOf(data.name);
+        EventsBus.listen('scenario:finished', (payload) => {
+            let index = this._waitingOn.indexOf(payload.name);
 
             if (
                 this._waitingOn.length > 0 &&
