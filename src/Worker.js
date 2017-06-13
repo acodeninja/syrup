@@ -25,7 +25,10 @@ process.on('message', (message) => {
         let worker = new Worker(message.scenario);
 
         try {
-            worker.setup(() => {
+            worker.setup((err) => {
+                if (err) {
+                    EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err } });
+                }
                 worker.run((results) => {
                     worker.report = results;
                     EventsBus.emit(`worker:finished`, JSON.parse(Util.circularStringify(worker, true)));
@@ -33,7 +36,7 @@ process.on('message', (message) => {
                 });
             });
         } catch(err) {
-            EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err.toString(), stack: err.stack } });
+            EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err }});
             process.exit();
         }
     }
