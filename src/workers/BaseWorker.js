@@ -38,7 +38,7 @@ class BaseWorker {
                 if (typeof global.Scenario === 'undefined') {
                     global.Scenario = that.scenario;
                 }
-                done();
+                done(err);
             });
         } catch (err) {
             throw new RequirementDoesNotExistError(err.toString().replace(/^([\s\S]+(globals\/))/, '').replace("\'", ''));
