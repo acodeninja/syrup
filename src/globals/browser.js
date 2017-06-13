@@ -11,5 +11,7 @@ module.exports = (done, options) => {
     Browser.init().then(() => {
         EventsBus.emit('browser:started');
         done();
+    }, (err) => {
+        done(err);
     });
 };
