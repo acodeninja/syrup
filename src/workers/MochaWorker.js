@@ -30,26 +30,26 @@ class MochaWorker extends BaseWorker {
             });
 
             runner.on('test', (test) => {
-                EventsBus.emit('mocha:test', {
+                EventsBus.emit('worker:test', {
                     name: this.name,
-                    data: JSON.parse(Util.circularStringify(test))
+                    data: test.title
                 });
             });
 
             // runner.on('test end', (test) => {
-            //     EventsBus.emit('mocha:testend', {);
+            //     EventsBus.emit('worker:testend', {);
             // });
 
             runner.on('pass', (test) => {
-                EventsBus.emit('mocha:pass', {
+                EventsBus.emit('worker:pass', {
                     name: this.name,
-                    data: JSON.parse(Util.circularStringify(test))
+                    data: test.title
                 });
             });
             runner.on('fail', (test) => {
-                EventsBus.emit('mocha:fail', {
+                EventsBus.emit('worker:fail', {
                     name: this.name,
-                    data: JSON.parse(Util.circularStringify(test))
+                    data: test.title
                 });
             });
         })
