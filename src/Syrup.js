@@ -4,8 +4,9 @@ const _ = require('lodash');
 const async = require('async');
 
 const EventsBus = require('./libs/EventsBus');
-const Scenario = require('./libs/Scenario');
 const Logger = require('./libs/Logger');
+const Scenario = require('./libs/Scenario');
+const Util = require('./libs/Util');
 
 const ScenarioAlreadyRegisteredError = require('./errors/ScenarioAlreadyRegisteredError');
 const NoScenariosRegisteredError = require('./errors/NoScenariosRegisteredError');
