@@ -11,6 +11,7 @@ class Worker {
         this.name = scenario.name;
         this.options = Util.deepExtend({ worker: 'mocha' }, scenario.options);
         this.data = Util.deepExtend(scenario.data, {});
+        this.config = Util.deepExtend(scenario.config, {});
     }
     start(data) {
         let worker = fork(`${__dirname}/../Worker`);

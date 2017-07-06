@@ -19,6 +19,7 @@ class BaseWorker {
             'assert',
             'get',
             'runs',
+            { name: 'config', options: this.scenario.config },
             { name: 'save', options: this.scenario.data }
         ].concat(this.scenario.options.requires));
 
@@ -38,6 +39,11 @@ class BaseWorker {
                 if (typeof global.Scenario === 'undefined') {
                     global.Scenario = that.scenario;
                 }
+
+                if (typeof global.Config === 'undefined') {
+                    global.Config = that.scenario.config;
+                }
+
                 done(err);
             });
         } catch (err) {

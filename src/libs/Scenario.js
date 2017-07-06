@@ -20,6 +20,7 @@ class Scenario {
         );
         this.report = {};
         this.data = Util.deepExtend({});
+        this.config = Util.deepExtend({});
         this._waitingOn = Array.from(this.options.after);
         this._isRunning = false;
         this._isFinished = false;

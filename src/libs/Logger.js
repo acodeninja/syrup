@@ -33,8 +33,8 @@ class Logger {
             prefix += chalk.yellow(`[${event}]`);
         }
 
-        if (_.has(payload, 'data.title')) {
-            output += payload.data.title;
+        if (typeof payload.data === 'string' && event.indexOf('data:') === -1 ) {
+            output += payload.data;
         }
 
         if (event.indexOf(':error') !== -1) {

@@ -1,4 +1,6 @@
 Browser:
-  host: 'localhost'
+  host: '192.168.101.10'
   desiredCapabilities:
-    browserName: 'phantomjs'
+    browserName: 'chrome'
+Test:
+  Data: 'testing'

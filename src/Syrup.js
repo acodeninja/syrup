@@ -45,16 +45,19 @@ class Syrup {
      */
     progress(onProgressUpdate) {
         let scenarios = {};
+
         EventsBus.listen('syrup:started', (syrup) => {
             _.each(syrup.scenarios, (scenario) => {
                 scenarios[scenario] = 'pending';
             });
             onProgressUpdate(scenarios);
         });
+
         EventsBus.listen('scenario:started', (scenario) => {
             scenarios[scenario.name] = 'running';
             onProgressUpdate(scenarios);
         });
+
         EventsBus.listen('scenario:finished', (scenario) => {
             scenarios[scenario.name] = 'finished';
             onProgressUpdate(scenarios);
@@ -115,7 +118,9 @@ class Syrup {
         }
 
         _.each(this.scenarios, (options, name) => {
-            this.scenarios[name] = new Scenario(name, options);
+            this.scenarios[name] = new Scenario(name, Util.deepExtend(options, { globals: this._globalsFile }));
+            this.scenarios[name].data = Util.deepExtend(this.scenarios[name].data, this.data);
+            this.scenarios[name].config = Util.deepExtend(this.scenarios[name].config, this._config);
 
             _.each(this.scenarios[name].options.after, (scenario) => {
                 if (this.scenarios[scenario] === undefined) {
