@@ -13,6 +13,9 @@ if (yargs.config) {
 
     syrup.config(config);
 }
+if (yargs.globals && typeof yargs.globals === 'string') {
+    syrup.globals(yargs.globals);
+}
 
 if (yargs.debug) {
     syrup.debug();

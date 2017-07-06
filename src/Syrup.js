@@ -19,6 +19,7 @@ class Syrup {
         this.scenarios = {};
         this._config = {};
         this._waitingOn = [];
+        this._globalsFile = null;
         this._debugging = false;
     }
 
@@ -85,6 +86,7 @@ class Syrup {
      * @returns {Syrup}
      */
     globals(path) {
+        this._globalsFile = require('path').resolve(path);
 
         return this;
     }

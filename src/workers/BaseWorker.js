@@ -44,6 +44,14 @@ class BaseWorker {
                     global.Config = that.scenario.config;
                 }
 
+                // Load in the globals given by the call to syrup.globals();
+                if (typeof that.scenario.options.globals === 'string') {
+                    let customGlobals = require(that.scenario.options.globals);
+                    _.each(customGlobals, (value, key) => {
+                        EventsBus.emit('global:loaded', { name: that.scenario.name, data: key });
+                        global[key] = value;
+                    });
+                }
                 done(err);
             });
         } catch (err) {
