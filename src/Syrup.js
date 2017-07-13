@@ -57,8 +57,9 @@ class Syrup {
     }
 
     /**
+     * Provide a config object for loading
      *
-     * @param configuration
+     * @param config
      * @returns {Syrup}
      */
     config(config) {
@@ -67,6 +68,11 @@ class Syrup {
         return this;
     }
 
+    /**
+     * Switch debugging on
+     *
+     * @returns {Syrup}
+     */
     debug() {
         this._debugging = true;
 
@@ -74,6 +80,7 @@ class Syrup {
     }
 
     /**
+     * Provide a method to be called on progress update
      *
      * @param onProgressUpdate
      * @returns {Syrup}
@@ -94,6 +101,7 @@ class Syrup {
     }
 
     /**
+     * Provide a method to be called on completion of pour
      *
      * @param onPourFinished
      * @returns {Syrup}
@@ -114,6 +122,7 @@ class Syrup {
     }
 
     /**
+     * Provide a path to a file with globals for registration in each scenario
      *
      * @param path
      * @returns {Syrup}
@@ -125,6 +134,7 @@ class Syrup {
     }
 
     /**
+     * Define a scenario to be run
      *
      * @param name
      * @param options
@@ -142,10 +152,10 @@ class Syrup {
     }
 
     /**
+     * Pour the current syrup setup
      *
-     * @param done
      */
-    pour(done) {
+    pour() {
         let firstRun = [];
 
         if (Object.keys(this.scenarios).length === 0) {
