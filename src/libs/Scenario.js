@@ -8,9 +8,12 @@ const Util = require('./Util');
 
 const ScenarioHasUnresolvedDependenciesError = require('../errors/ScenarioHasUnresolvedDependenciesError');
 
+const workers = {
+    'mocha': 'Mocha'
+};
+
 class Scenario {
-    constructor(name, options) {
-        this.name = name;
+    constructor(name, options, description) {
         this.options = _.extend({
                 after: [],
                 requires: [],
@@ -18,13 +21,18 @@ class Scenario {
             },
             options ? options : {}
         );
-        this.report = {};
+
+        this.name = name;
+        this.description = description === undefined ? '' : description;
+        this.options.worker = workers[this.options.worker];
+
         this.data = Util.deepExtend({});
         this.config = Util.deepExtend({});
         this._waitingOn = Array.from(this.options.after);
         this._isRunning = false;
         this._isFinished = false;
         this._worker = new Worker(this);
+        this._reporter = require(`../reports/${this.options.worker}Report`);
 
         EventsBus.listen('scenario:finished', (data) => {
             let index = this._waitingOn.indexOf(data.name);
@@ -61,11 +69,12 @@ class Scenario {
         this._worker.start();
     }
     finish(payload) {
-        if (this.name === payload.name) {
+        if (this.name === payload.name && false === this._isFinished) {
             this._isFinished = true;
-            this.report = payload.report;
             this.data = Util.deepExtend(this.data, payload.scenario.data);
-            setTimeout(() => EventsBus.emit('scenario:finished', this));
+            let report = new this._reporter(payload);
+            this.report = report.getReport();
+            EventsBus.emit('scenario:finished', this);
         }
     }
 }
