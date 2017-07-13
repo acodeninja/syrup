@@ -36,6 +36,19 @@ class Syrup {
         EventsBus.listen('scenario:finished', (scenario) => {
             this._progress[scenario.name] = 'finished';
             this._onProgressUpdate(this._progress);
+
+            let index = this._waitingOn.indexOf(scenario.name);
+
+            if (
+                this._waitingOn.length > 0 &&
+                typeof this._waitingOn[index] !== 'undefined'
+            ) {
+                this._waitingOn.splice(index, 1);
+            }
+
+            if (this._waitingOn.length === 0) {
+                setTimeout(() => EventsBus.emit('syrup:finished', this));
+            }
         });
 
         EventsBus.listen('syrup:finished', (syrup) => {
@@ -143,6 +156,7 @@ class Syrup {
             this.scenarios[name] = new Scenario(name, Util.deepExtend(options, { globals: this._globalsFile }));
             this.scenarios[name].data = Util.deepExtend(this.scenarios[name].data, this.data);
             this.scenarios[name].config = Util.deepExtend(this.scenarios[name].config, this._config);
+            this._progress[name] = 'pending';
 
             _.each(this.scenarios[name].options.after, (scenario) => {
                 if (this.scenarios[scenario] === undefined) {
@@ -159,21 +173,9 @@ class Syrup {
             new Logger('syrup');
         }
 
-        EventsBus.emit('syrup:started', { scenarios: _.keys(this.scenarios), config: this._config });
-
-        EventsBus.listen('scenario:finished', (payload) => {
-            let index = this._waitingOn.indexOf(payload.name);
-
-            if (
-                this._waitingOn.length > 0 &&
-                typeof this._waitingOn[index] !== 'undefined'
-            ) {
-                this._waitingOn.splice(index, 1);
-            }
-
-            if (this._waitingOn.length === 0) {
-                setTimeout(() => EventsBus.emit('syrup:finished', this));
-            }
+        EventsBus.emit('syrup:started', {
+            scenarios: _.keys(this.scenarios),
+            config: this._config
         });
 
         async.parallel(_.map(firstRun, (name) => (done) => { this.scenarios[name].start(); done(); }));
