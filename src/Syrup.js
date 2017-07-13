@@ -22,6 +22,25 @@ class Syrup {
         this._waitingOn = [];
         this._globalsFile = null;
         this._debugging = false;
+        this._progress = {};
+
+        EventsBus.listen('syrup:started', (syrup) => {
+            this._onProgressUpdate(this._progress);
+        });
+
+        EventsBus.listen('scenario:started', (scenario) => {
+            this._progress[scenario.name] = 'running';
+            this._onProgressUpdate(this._progress);
+        });
+
+        EventsBus.listen('scenario:finished', (scenario) => {
+            this._progress[scenario.name] = 'finished';
+            this._onProgressUpdate(this._progress);
+        });
+
+        EventsBus.listen('syrup:finished', (syrup) => {
+            this._onPourFinished(syrup._report);
+        });
     }
 
     /**
@@ -31,6 +50,7 @@ class Syrup {
      */
     config(config) {
         this._config = config;
+
         return this;
     }
 
@@ -46,26 +66,18 @@ class Syrup {
      * @returns {Syrup}
      */
     progress(onProgressUpdate) {
-        let scenarios = {};
-
-        EventsBus.listen('syrup:started', (syrup) => {
-            _.each(syrup.scenarios, (scenario) => {
-                scenarios[scenario] = 'pending';
-            });
-            onProgressUpdate(scenarios);
-        });
-
-        EventsBus.listen('scenario:started', (scenario) => {
-            scenarios[scenario.name] = 'running';
-            onProgressUpdate(scenarios);
-        });
-
-        EventsBus.listen('scenario:finished', (scenario) => {
-            scenarios[scenario.name] = 'finished';
-            onProgressUpdate(scenarios);
-        });
+        this._onProgressUpdate = onProgressUpdate;
 
         return this;
+    }
+
+    /**
+     * Placeholder method for progress updates
+     *
+     * @private
+     */
+    _onProgressUpdate() {
+
     }
 
     /**
@@ -74,11 +86,18 @@ class Syrup {
      * @returns {Syrup}
      */
     report(onPourFinished) {
-        EventsBus.listen('syrup:finished', (syrup) => {
-            onPourFinished(syrup);
-        });
+        this._onPourFinished = onPourFinished;
 
         return this;
+    }
+
+    /**
+     * Placeholder method for pour finished
+     *
+     * @private
+     */
+    _onPourFinished() {
+
     }
 
     /**
