@@ -9,6 +9,7 @@ const Util = require('./Util');
 class Worker {
     constructor(scenario) {
         this.name = scenario.name;
+        this.description = scenario.description;
         this.options = Util.deepExtend({ worker: 'mocha' }, scenario.options);
         this.data = Util.deepExtend(scenario.data, {});
         this.config = Util.deepExtend(scenario.config, {});
