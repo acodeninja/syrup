@@ -5,10 +5,6 @@ const _  = require('lodash');
 const EventsBus = require('./libs/EventsBus');
 const Util = require('./libs/Util');
 
-const workers = {
-    'mocha': 'MochaWorker'
-};
-
 EventsBus.listen('**', function (data) {
     process.send({
         event: this.event,
@@ -21,13 +17,13 @@ process.on('message', (message) => {
         EventsBus.emit(message.event, message.data);
     }
     if (_.has(message, 'scenario')) {
-        const Worker = require(`./workers/${workers[message.scenario.options.worker]}`);
+        const Worker = require(`./workers/${message.scenario.options.worker}Worker`);
         let worker = new Worker(message.scenario);
 
         try {
             worker.setup((err) => {
                 if (err) {
-                    EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err } });
+                    EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err.toString() } });
                 }
                 worker.run((results) => {
                     worker.report = results;
@@ -36,7 +32,7 @@ process.on('message', (message) => {
                 });
             });
         } catch(err) {
-            EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err }});
+            EventsBus.emit(`worker:error`, { name: worker.name, data: { error: err.toString() }});
             process.exit();
         }
     }
