@@ -12,7 +12,12 @@ if (yargs.config) {
     ));
 
     syrup.config(config);
+
+    if (syrup._config.Data) {
+        syrup.data = syrup._config.Data;
+    }
 }
+
 if (yargs.globals && typeof yargs.globals === 'string') {
     syrup.globals(yargs.globals);
 }
