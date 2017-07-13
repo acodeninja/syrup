@@ -18,11 +18,23 @@ class Syrup {
      */
     constructor() {
         this.scenarios = {};
+
         this._config = {};
         this._waitingOn = [];
         this._globalsFile = null;
         this._debugging = false;
         this._progress = {};
+        this._report = {
+            stats: {
+                scenarios: 0,
+                tests: 0,
+                passes: 0,
+                failures: 0,
+                duration: 0
+            },
+            data: { },
+            scenarios: []
+        };
 
         EventsBus.listen('syrup:started', (syrup) => {
             this._onProgressUpdate(this._progress);
@@ -36,6 +48,15 @@ class Syrup {
         EventsBus.listen('scenario:finished', (scenario) => {
             this._progress[scenario.name] = 'finished';
             this._onProgressUpdate(this._progress);
+
+            // Reporting updates
+            this._report.scenarios.push(scenario.report);
+            this._report.stats.scenarios ++;
+            this._report.stats.tests += scenario.report.stats.tests;
+            this._report.stats.passes += scenario.report.stats.passes;
+            this._report.stats.failures += scenario.report.stats.failures;
+            this._report.stats.duration += scenario.report.stats.duration;
+            this._report.data = Util.deepExtend(this._report.data, scenario.data);
 
             let index = this._waitingOn.indexOf(scenario.name);
 
