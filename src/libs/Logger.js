@@ -6,7 +6,7 @@ const chalk = require('chalk');
 const EventsBus = require('./EventsBus');
 
 class Logger {
-    constructor(prefix) {
+    constructor() {
         let onEvent = this.onEvent.bind(this);
 
         this._prefix = '';
@@ -22,11 +22,11 @@ class Logger {
         // If we get a string through,
         // attempt to parse it to json
         if (typeof payload === 'string') {
-            try { payload = JSON.parse(payload) } catch (err) {}
+            try { payload = JSON.parse(payload); } catch (err) {}
         }
 
         if (typeof payload.name !== 'undefined') {
-            prefix += chalk.green(`[${payload.name}]`)
+            prefix += chalk.green(`[${payload.name}]`);
         }
 
         if (typeof event !== 'undefined') {
