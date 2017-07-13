@@ -38,3 +38,19 @@ $ node start.js
 [syrup:finished]
 $ _
 ```
+
+## Examples
+
+You will find a full set of examples in the ```./examples``` folder. The basic example
+folder has a fully bootstrapped setup for use on the command line. Feel free to copy 
+this set up for your own projects.
+
+You can run the test setup like this:
+
+```bash
+$ node examples/basic/start.js --progress --report --debug --config ./examples/basic/config.yaml
+```
+
+This will output debug information, progress updates and the final report for you run.
+In addition it will load the config.yaml file for use in your scenarios and for the
+globals inside each worker.
