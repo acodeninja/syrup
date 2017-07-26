@@ -1,0 +1,6 @@
+Browser:
+  host: '192.168.101.10'
+  desiredCapabilities:
+    browserName: 'chrome'
+Test:
+  Data: 'testing'
