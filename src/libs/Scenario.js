@@ -13,7 +13,7 @@ const workers = {
 };
 
 class Scenario {
-    constructor(name, options, description) {
+    constructor(name, options) {
         this.options = _.extend({
                 after: [],
                 requires: [],
@@ -23,7 +23,7 @@ class Scenario {
         );
 
         this.name = name;
-        this.description = description === undefined ? '' : description;
+        this.description = options.description === undefined ? '' : options.description;
         this.options.worker = workers[this.options.worker];
 
         this.data = Util.deepExtend({});
