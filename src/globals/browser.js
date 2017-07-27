@@ -5,13 +5,19 @@ const _ = require('lodash');
 
 const EventsBus = require('../libs/EventsBus');
 
-module.exports = (done, options) => {
-    global.Browser = WebDriver.remote(_.extend({}, options));
+module.exports = {
+    up: (done, options) => {
+        global.Browser = WebDriver.remote(_.extend({}, options));
 
-    Browser.init().then(() => {
-        EventsBus.emit('browser:started');
-        done();
-    }, (err) => {
-        done(err);
-    });
+        Browser.init().then(() => {
+            EventsBus.emit('browser:started');
+            done();
+        }, (err) => {
+            done(err);
+        });
+    },
+    down: (done, options) => {
+        Browser.end().then(() => {done()}, () => {done();});
+    }
 };
+
