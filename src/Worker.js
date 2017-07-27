@@ -27,8 +27,10 @@ process.on('message', (message) => {
                 }
                 worker.run((results) => {
                     worker.report = results;
-                    EventsBus.emit(`worker:finished`, JSON.parse(Util.circularStringify(worker, true)));
-                    process.exit();
+                    worker.done(() => {
+                        EventsBus.emit(`worker:finished`, JSON.parse(Util.circularStringify(worker, true)));
+                        process.exit();
+                    });
                 });
             });
         } catch(err) {
