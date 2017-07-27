@@ -12,23 +12,23 @@ class BaseWorker {
     constructor(scenario) {
         this.name = scenario.name;
         this.scenario = scenario;
-    }
-    setup(done) {
-        let that = this;
-        let theGlobals = _.uniq([
+        this._globals = _.uniq([
             'assert',
             'get',
             'runs',
             { name: 'config', options: this.scenario.config },
             { name: 'save', options: this.scenario.data }
         ].concat(this.scenario.options.requires));
+    }
+    setup(done) {
+        let that = this;
 
         EventsBus.listen('data:save', (payload) => {
             this.scenario.data = Util.deepExtend(this.scenario.data, _.set({}, payload.path, payload.data));
         });
 
         try {
-            async.filter(theGlobals, function(requirement, callback) {
+            async.filter(this._globals, function(requirement, callback) {
                 let theGlobal = `${__dirname}/../globals/` + (typeof requirement === 'string' ? requirement : requirement.name);
                 let options = typeof requirement === 'object' ? requirement.options : {};
 
