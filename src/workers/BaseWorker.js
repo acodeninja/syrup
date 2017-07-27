@@ -66,6 +66,26 @@ class BaseWorker {
         EventsBus.emit('worker:started', { name: this.scenario.name });
         done();
     }
+    done(done) {
+        try {
+            async.filter(this._globals, function(requirement, callback) {
+                let theGlobal = `${__dirname}/../globals/` + (typeof requirement === 'string' ? requirement : requirement.name);
+                let options = typeof requirement === 'object' ? requirement.options : {};
+
+                requirement = require(theGlobal);
+
+                if (typeof requirement === 'object' && _.has(requirement, 'down')) {
+                    requirement.down(callback, options);
+                } else {
+                    callback();
+                }
+            }, function (err) {
+                done(err);
+            });
+        } catch (err) {
+            throw new RequirementDoesNotExistError(err.toString().replace(/^([\s\S]+(globals\/))/, '').replace("\'", ''));
+        }
+    }
 }
 
 module.exports = BaseWorker;
