@@ -15,7 +15,7 @@ class BaseWorker {
     }
     setup(done) {
         let that = this;
-        let globals = _.uniq([
+        let theGlobals = _.uniq([
             'assert',
             'get',
             'runs',
@@ -28,12 +28,16 @@ class BaseWorker {
         });
 
         try {
-            async.filter(globals, function(requirement, callback) {
-                if (typeof requirement === 'string') {
-                    require(`${__dirname}/../globals/${requirement}`)(callback);
-                }
-                if (typeof requirement === 'object') {
-                    require(`${__dirname}/../globals/${requirement.name}`)(callback, requirement.options);
+            async.filter(theGlobals, function(requirement, callback) {
+                let theGlobal = `${__dirname}/../globals/` + (typeof requirement === 'string' ? requirement : requirement.name);
+                let options = typeof requirement === 'object' ? requirement.options : {};
+
+                requirement = require(theGlobal);
+
+                if (typeof requirement === 'function') {
+                    requirement(callback, options);
+                } else {
+                    requirement.up(callback, options);
                 }
             }, function (err, results) {
                 if (typeof global.Scenario === 'undefined') {
