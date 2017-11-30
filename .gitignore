@@ -1,5 +1,6 @@
 node_modules/
 .idea/
 *.log
+*.err
 progress.json
 report.json
