@@ -1,6 +1,6 @@
 {
   "name": "syrup",
-  "version": "1.0.0",
+  "version": "0.4.0",
   "description": "Testing framework offering parallel testing with dependency resolution",
   "main": "index.js",
   "scripts": {

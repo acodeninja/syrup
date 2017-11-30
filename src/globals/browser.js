@@ -20,6 +20,8 @@ module.exports = {
                 });
             }).then(() => {
                 module.exports.connect(done, options);
+            }).catch(() => {
+                module.exports.connect(done, options);
             });
         } else {
             module.exports.connect(done, options);

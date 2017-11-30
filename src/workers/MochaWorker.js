@@ -14,7 +14,7 @@ class MochaWorker extends BaseWorker {
     setup(done) {
         this._mocha.addFile(this.scenario.options.entrypoint);
         this._mocha.reporter('json');
-        this._mocha.timeout(0);
+        this._mocha.timeout(300000);
         super.setup(done);
     }
     run(done) {
