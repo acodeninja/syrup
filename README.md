@@ -1,6 +1,6 @@
 # syrup
 
-[![Build Status](https://travis-ci.org/thejsninja/syrup.svg)](https://travis-ci.org/thejsninja/syrup)
+[![Build Status](https://travis-ci.org/acodeninja/syrup.svg)](https://travis-ci.org/acodeninja/syrup)
 
 ## tl;dw
 
@@ -20,7 +20,7 @@ Setup and register a scenario for your test
 require('syrup').debug().scenario(
     'example:arrays',
     {
-        entrypoint: `${__dirname}/test_array.js` 
+        entrypoint: `${__dirname}/test_array.js`
     }
 );
 ```
@@ -29,12 +29,12 @@ Run the scenario
 ```bash
 $ node start.js
 [syrup:started] {"scenarios":["example:arrays"],"config":{}}
-[example:arrays][scenario:started] 
-[example:arrays][worker:started] 
+[example:arrays][scenario:started]
+[example:arrays][worker:started]
 [example:arrays][mocha:test] should return -1 when the value is not present
 [example:arrays][mocha:pass] should return -1 when the value is not present
-[example:arrays][worker:finished] 
-[example:arrays][scenario:finished] 
+[example:arrays][worker:finished]
+[example:arrays][scenario:finished]
 [syrup:finished]
 $ _
 ```
@@ -42,7 +42,7 @@ $ _
 ## Examples
 
 You will find a full set of examples in the ```./examples``` folder. The basic example
-folder has a fully bootstrapped setup for use on the command line. Feel free to copy 
+folder has a fully bootstrapped setup for use on the command line. Feel free to copy
 this set up for your own projects.
 
 You can run the test setup like this:
@@ -54,3 +54,20 @@ $ node examples/basic/start.js --progress --report --debug --config ./examples/b
 This will output debug information, progress updates and the final report for you run.
 In addition it will load the config.yaml file for use in your scenarios and for the
 globals inside each worker.
+
+## Browserstack Local
+
+Download the browserstack local binary for your flavour:
+
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-x64
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-ia32
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-darwin-x64
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal.exe
+
+And run it
+
+```bash
+$ ./BrowserStackLocal-linux-x64 --key xxxxxxxxxxxxxxxxx
+```
+
+Then run your tests
