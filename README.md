@@ -54,3 +54,20 @@ $ node examples/basic/start.js --progress --report --debug --config ./examples/b
 This will output debug information, progress updates and the final report for you run.
 In addition it will load the config.yaml file for use in your scenarios and for the
 globals inside each worker.
+
+## Browserstack Local
+
+Download the browserstack local binary for your flavour:
+
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-x64
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-linux-ia32
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal-darwin-x64
+https://s3.amazonaws.com/browserStack/browserstack-local/BrowserStackLocal.exe
+
+And run it
+
+```bash
+$ ./BrowserStackLocal-linux-x64 --key xxxxxxxxxxxxxxxxx
+```
+
+Then run your tests
