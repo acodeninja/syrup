@@ -10,6 +10,7 @@ module.exports = {
 
         Browser.init().then(() => {
             EventsBus.emit('browser:started');
+            Browser.windowHandleMaximize();
             done();
         }, (err) => {
             done(err);
